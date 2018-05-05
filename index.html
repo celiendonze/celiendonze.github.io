@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Water Ripples Effects</title>
+    <script type="text/javascript">
+      let canvas;
+      let ctx;
+      let buffer1;
+      let buffer2;
+      const damping = 0.99;
+      const zoom = 5;
+      let interval;
+      let raf =
+        window.requestAnimationFrame || // La fonction d'origine que tous les navigateurs finiront par utiliser.
+        window.webkitRequestAnimationFrame || // Pour Chrome et Safari.
+        window.mozRequestAnimationFrame || // Pour Firefox.
+        window.ORequestAnimationFrame || // Pour Opera.
+        window.msRequestAnimationFrame // Pour Internet Explorer.
+      function setup()
+      {
+        if(ctx == undefined)
+        {
+          canvas = document.getElementById('canvas');
+          ctx = canvas.getContext("2d");
+          buffer1 = Array.from(Array(canvas.width/zoom), () => new Array(canvas.height/zoom));
+          buffer2 = Array.from(Array(canvas.width/zoom), () => new Array(canvas.height/zoom));
+          for (var i = 0; i < buffer1.length; i++) {
+            for (var j = 0; j < buffer1[i].length; j++) {
+              buffer1[i][j] = 0;
+              buffer2[i][j] = 0;
+            }
+          }
+        }
+        raf(update);
+        //interval = setInterval(update, 0);
+      }
+
+      function update()
+      {
+        if (Math.random()>0.95) {
+          buffer1[1+Math.floor(Math.random()*(buffer1.length-2))][1+Math.floor(Math.random()*(buffer1[0].length-2))] = 255;
+        }
+
+        for (var x = 1; x < buffer1.length-1; x++) {
+          for (var y = 1; y < buffer1[x].length-1; y++) {
+            let tempValue = ( buffer1[x-1][y]+
+                              buffer1[x+1][y]+
+                              buffer1[x][y+1]+
+                              buffer1[x][y-1])/4
+            tempValue -= buffer2[x][y];
+            buffer2[x][y] = tempValue * damping;
+          }
+        }
+        displayBuffer();
+        let tmpBuffer = buffer1;
+        buffer1 = buffer2;
+        buffer2 = tmpBuffer;
+
+        raf(update);
+      }
+
+      function displayBuffer()
+      {
+        for (var i = 0; i < buffer1.length; i++) {
+          for (var j = 0; j < buffer1[i].length; j++) {
+            let color = buffer1[i][j];
+            ctx.fillStyle = "rgb("+color+","+color+","+color+")";
+            ctx.fillRect( i*zoom, j*zoom, zoom, zoom );
+          }
+        }
+      }
+    </script>
+  </head>
+  <body onload="setup();">
+    <canvas id="canvas" width="500" height="500"></canvas>
+  </body>
+</html>
