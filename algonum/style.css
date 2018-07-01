@@ -1,0 +1,39 @@
+body {
+
+}
+
+#mathFormula {
+  display: inline-block;
+  vertical-align: top;
+  width: 450px;
+  height: 450px;
+  font-size: 50px;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+#canvas {
+  display: inline-block;
+  vertical-align: top;
+}
+
+#goldenRationDisplayWrapper {
+  font-size: 40px;
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 10px;
+}
+
+.controlsWrapper, .tableWrapper {
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.controlsWrapper {
+  margin-right: 20px;
+}

@@ -66,10 +66,6 @@
 
       function update()
       {
-        if (Math.random()>0.95) {
-          //buffer1[1+Math.floor(Math.random()*(buffer1.length-2))][1+Math.floor(Math.random()*(buffer1[0].length-2))] = 255;
-        }
-
         for (var x = 1; x < buffer1.length-1; x++) {
           for (var y = 1; y < buffer1[x].length-1; y++) {
             let tempValue = ( buffer1[x-1][y]+

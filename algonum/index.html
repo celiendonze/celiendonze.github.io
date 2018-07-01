@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Algo_Num - Projet Perso - Célien Donzé</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="script.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        showMathMenu: false,
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+      });
+      </script>
+  </head>
+  <body onload="setup();">
+    <canvas id="canvas" width="450" height="450"></canvas>
+    <div id="mathFormula">\( \phi = 1 + { 1 \over {1 + {1 \over {1 + {1 \over {1 + {1 \over {1 + {1 \over {1 + {1 \over ...}}}}}}}}}}}\)</div>
+    <br>
+    <div class="controlsWrapper">
+      <input id="inputGoldenRatio" type="range" style="width: 400px" value="0.618" min="0" max="1" step="0.001" oninput="actionOnRangeMove()">
+      <div id="goldenRationDisplayWrapper"><span id="goldenRationDisplay">1.618</span></div>
+      <br>
+      <button type="button" onclick="autoMoveToGoldenRatio();">Approximate GoldenRatio</button>
+      <p>
+        Iterate from value
+        <input type="text" name="" value="0.617940" id="start"> to
+        <input type="text" name="" value="0.618035" id="end"> with step
+        <input type="text" name="" value="0.000001" id="step"> <button type="button" onclick="onClickButtonGo();">GO</button>
+      </p>
+    </div>
+    <div class="tableWrapper">
+      <table>
+        <tr>
+          <th>Method</th>
+          <th>Value</th>
+          <th>Source</th>
+        </tr>
+        <tr>
+          <td>From the Internet</td>
+          <td>1.6180339887498948</td>
+          <td><a href="https://www2.cs.arizona.edu/icon/oddsends/phi.htm">arizona.edu</a></td>
+        </tr>
+        <tr>
+          <td>Using Continued Fraction</td>
+          <td id="displayInfiniteFraction"></td>
+          <td>my code, <a href="https://www.mathsisfun.com/numbers/golden-ratio.html">mathsisfun.com</a></td>
+        </tr>
+        <tr>
+          <td>Using Fibonacci</td>
+          <td id="displayFibonacci"></td>
+          <td>my code, <a href="https://www.mathsisfun.com/numbers/golden-ratio.html">mathsisfun.com</a></td>
+        </tr>
+        <tr>
+          <td>\( { 1 + \sqrt 5} \over 2 \)</td>
+          <td id="displaySqrt5"></td>
+          <td><a href="https://www.mathsisfun.com/numbers/golden-ratio.html">mathsisfun.com</a></td>
+        </tr>
+        <tr>
+          <td>\( 2 * sin(54°) \)</td>
+          <td id="displaySinus54"></td>
+          <td><a href="https://www.mathsisfun.com/numbers/golden-ratio.html">mathsisfun.com</a></td>
+        </tr>
+      </table>
+    </div>
+    <p>
+      Sources of the ideas of this project:
+      <ul>
+        <li>
+          <a href="https://www.youtube.com/watch?v=OAcXnzRNiCY">Coding Challenge #30: Phyllotaxis</a> by Daniel Shiffman
+        </li>
+        <li>
+          <a href="http://algorithmicbotany.org/papers/abop/abop-ch4.pdf">The Algorithmic Beauty of Plants</a> by Przemyslaw Prusinkiewicz and Aristid Lindenmayer
+        </li>
+      </ul>
+    </p>
+  </body>
+</html>
