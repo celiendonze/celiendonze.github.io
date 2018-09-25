@@ -24,14 +24,14 @@
         {
           let teemoCanvas = document.getElementById("teemoCanvas");
           let img = document.getElementById("teemoImg");
-          var image = new Image();
+          let image = new Image();
           image.src=img.src;
           image.onload = function () {
              teemoCanvas.getContext('2d').drawImage(image,0,0);
 
              bufferImage = Array.from(Array(img.width), () => new Array(img.height));
-             for (var i = 0; i < bufferImage.length; i++) {
-               for (var j = 0; j < bufferImage[i].length; j++) {
+             for (let i = 0; i < bufferImage.length; i++) {
+               for (let j = 0; j < bufferImage[i].length; j++) {
                  let pixelData = teemoCanvas.getContext('2d').getImageData(i, j, 1, 1).data;
                  bufferImage[i][j] = [pixelData[0], pixelData[1], pixelData[2]];
                }
@@ -41,8 +41,8 @@
              ctx = canvas.getContext("2d");
              buffer1 = Array.from(Array(canvas.width/zoom), () => new Array(canvas.height/zoom));
              buffer2 = Array.from(Array(canvas.width/zoom), () => new Array(canvas.height/zoom));
-             for (var i = 0; i < buffer1.length; i++) {
-               for (var j = 0; j < buffer1[i].length; j++) {
+             for (let i = 0; i < buffer1.length; i++) {
+               for (let j = 0; j < buffer1[i].length; j++) {
                  buffer1[i][j] = 0;
                  buffer2[i][j] = 0;
                }
@@ -86,8 +86,8 @@
 
       function displayBuffer(buffer)
       {
-        for (var i = 0; i < buffer.length; i++) {
-          for (var j = 0; j < buffer[i].length; j++) {
+        for (let i = 0; i < buffer.length; i++) {
+          for (let j = 0; j < buffer[i].length; j++) {
             //let color = buffer[i][j] + buffer2[i][j];
             ctx.fillStyle = "rgb("+(buffer[i][j][0]+buffer2[i][j])+","+(buffer[i][j][1]+buffer2[i][j])+","+(buffer[i][j][2]+buffer2[i][j])+")";
             ctx.fillRect( i*zoom, j*zoom, zoom, zoom );

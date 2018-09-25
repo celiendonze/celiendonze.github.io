@@ -1,0 +1,64 @@
+/*
+Author : Biloni Kim, Donzé Célien & Vorpe Fabien
+Description : main style sheet
+*/
+
+body {
+    background-color: rgb(219, 240, 245);
+    font-family: 'Trebuchet MS';
+    display: block;
+}
+
+h1 {
+    color: rgb(5, 54, 56);
+}
+
+p {
+    padding-left: 1%;
+}
+
+.up > div {
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.canvas > * {
+    display: block;
+}
+.canvas > button {
+    margin: auto;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+}
+
+#neuralNetworksButtons > button {
+    margin: auto;
+    margin-top: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 10px;
+}
+
+section {
+    border: 3px solid rgb(5, 54, 56, 0.4);
+    padding: 1%;
+    margin-bottom: 1%;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#container {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid rgb(5, 54, 56, 0.4);
+    background-color: white;
+}

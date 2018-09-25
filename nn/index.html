@@ -1,0 +1,51 @@
+<!--
+  Authors : Biloni Kim, Donzé Célien & Vorpe Fabien
+  Description : WebApp - Digits Reconizer
+  Web Application of a digit reconizer using tensorflow.js
+  User draw in a canevas. He selects a Neural Network architecture who'll
+  predict which digit or letter he draw. A panel shows the diffrent probability.
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Digits Reconizer</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.12.5"> </script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+</head>
+
+<body>
+	<div class="main">
+		<section id="title">
+			<h1>Digits Reconizer with Tensorflow.js</h1>
+			<h4>Hes d'été 2018 - Biloni Kim, Donzé Célien, Vorpe Fabien</h2>
+		</section>
+		<section class="up">
+			<div class="canvas">
+				<canvas id="canvas" height="280" width="280" oncontextmenu="return false;" onmousemove="readDrawing(event);" onmousedown="mousePressed(event);" onmouseup="mouseReleased(event)"></canvas>
+				<button onclick="reset();">reset</button>
+			</div>
+			<div class="ModelInfo">
+				<p id="loadingState" style="display: inline;">loading...</p>
+				<h3>Model name: <span id="modelName"></span></h3>
+				<p>Model's prediction : <span id="predictedClass"></span></p>
+				<p>Model's confidence : <span id="confidence"></span></p>
+			</div>
+			<div class="section" id="neuralNetworksButtons">
+				<p>Models available:</p>
+			</div>
+		</section>
+		<section class="down">
+			<canvas id="chart" height="200" width="720"></canvas>
+		</section>
+	</div>
+	<script src="utils.js" type="text/javascript"> </script>
+	<script src="ModelButton.js" type="text/javascript"></script>
+	<script src="models.js" type="text/javascript"></script>
+	<script src="script.js" type="text/javascript"> </script>
+</body>
+</html>
