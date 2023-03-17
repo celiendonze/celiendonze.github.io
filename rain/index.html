@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8" />
+        <title>Rain simulation</title>
+        <script src="https://cdn.plot.ly/plotly-2.18.2.min.js"></script>
+        <style>
+            body {
+                background-color: lightgray;
+            }
+            canvas,
+            #graph {
+                border: 1px solid black;
+            }
+            #options {
+                display: grid;
+                grid-gap: 3px;
+                width: 300px;
+            }
+            #options > div {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            #options > div > p {
+                width: 100px;
+            }
+            input {
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body onload="draw();">
+        <canvas id="canvas" width="1000" height="500"></canvas>
+        <div id="options">
+            <button onclick="reset();">reset</button>
+            <button onclick="go();">GO</button>
+            <button onclick="autorun();">autorun</button>
+            <div>
+                <p>Number of raindrops</p>
+                <p id="raindrops_value">500</p>
+                <input
+                    type="range"
+                    min="100"
+                    max="1000"
+                    step="100"
+                    value="500"
+                    id="number_of_raindrops"
+                    onchange="update_raindrops();"
+                />
+            </div>
+            <div>
+                <p>Speed</p>
+                <p id="speed_value">5</p>
+                <input
+                    type="range"
+                    min="1"
+                    max="20"
+                    step="1"
+                    value="5"
+                    class="slider"
+                    id="speed_range"
+                    onchange="update_speed();"
+                />
+            </div>
+        </div>
+        <div id="graph" style="width: 500px; height: 500px"></div>
+    </body>
+    <script type="text/javascript" src="script.js"></script>
+</html>
