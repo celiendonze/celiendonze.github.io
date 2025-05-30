@@ -1,106 +1,75 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Water Ripples Effects</title>
-    <script type="text/javascript">
-      let canvas;
-      let ctx;
-      let buffer1;
-      let buffer2;
-      let bufferImage;
-      const damping = 0.9;
-      const zoom = 5;
-      let interval;
-      let raf =
-        window.requestAnimationFrame || // La fonction d'origine que tous les navigateurs finiront par utiliser.
-        window.webkitRequestAnimationFrame || // Pour Chrome et Safari.
-        window.mozRequestAnimationFrame || // Pour Firefox.
-        window.ORequestAnimationFrame || // Pour Opera.
-        window.msRequestAnimationFrame // Pour Internet Explorer.
-      function setup()
-      {
-        if(ctx == undefined)
-        {
-          let teemoCanvas = document.getElementById("teemoCanvas");
-          let img = document.getElementById("teemoImg");
-          let image = new Image();
-          image.src=img.src;
-          image.onload = function () {
-             teemoCanvas.getContext('2d').drawImage(image,0,0);
+<html lang="en">
 
-             bufferImage = Array.from(Array(img.width), () => new Array(img.height));
-             for (let i = 0; i < bufferImage.length; i++) {
-               for (let j = 0; j < bufferImage[i].length; j++) {
-                 let pixelData = teemoCanvas.getContext('2d').getImageData(i, j, 1, 1).data;
-                 bufferImage[i][j] = [pixelData[0], pixelData[1], pixelData[2]];
-               }
-             }
-
-             canvas = document.getElementById('canvas');
-             ctx = canvas.getContext("2d");
-             buffer1 = Array.from(Array(canvas.width/zoom), () => new Array(canvas.height/zoom));
-             buffer2 = Array.from(Array(canvas.width/zoom), () => new Array(canvas.height/zoom));
-             for (let i = 0; i < buffer1.length; i++) {
-               for (let j = 0; j < buffer1[i].length; j++) {
-                 buffer1[i][j] = 0;
-                 buffer2[i][j] = 0;
-               }
-             }
-             raf(update);
-          }
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f9f9f9;
         }
 
-      }
-
-      function setPixel(event)
-      {
-        let e = event || window.event;
-        let x = Math.floor(e.offsetX/zoom);
-        let y = Math.floor(e.offsetY/zoom);
-        if(x > 1 && y > 1 && x < buffer1.length-1 && y < buffer1[0].length-1)
-        {
-          buffer1[x][y] = 255;
+        h1 {
+            color: #333;
         }
-      }
 
-      function update()
-      {
-        for (var x = 1; x < buffer1.length-1; x++) {
-          for (var y = 1; y < buffer1[x].length-1; y++) {
-            let tempValue = ( buffer1[x-1][y]+
-                              buffer1[x+1][y]+
-                              buffer1[x][y+1]+
-                              buffer1[x][y-1])/4
-            tempValue -= buffer2[x][y];
-            buffer2[x][y] = tempValue * damping;
-          }
+        .projects-list {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-top: 32px;
         }
-        displayBuffer(bufferImage);
-        let tmpBuffer = buffer1;
-        buffer1 = buffer2;
-        buffer2 = tmpBuffer;
 
-        raf(update);
-      }
-
-      function displayBuffer(buffer)
-      {
-        for (let i = 0; i < buffer.length; i++) {
-          for (let j = 0; j < buffer[i].length; j++) {
-            //let color = buffer[i][j] + buffer2[i][j];
-            ctx.fillStyle = "rgb("+(buffer[i][j][0]+buffer2[i][j])+","+(buffer[i][j][1]+buffer2[i][j])+","+(buffer[i][j][2]+buffer2[i][j])+")";
-            ctx.fillRect( i*zoom, j*zoom, zoom, zoom );
-          }
+        .project-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            transition: box-shadow 0.2s;
         }
-      }
-    </script>
-  </head>
-  <body onload="setup();">
-    <div style='display: none'>
-      <img id="teemoImg" src="./teemo.png" alt=""  width="100" height="100">
-    </div>
-    <canvas id="teemoCanvas" width="100" height="100" style="display: none"></canvas>
-    <canvas id="canvas" width="500" height="500" onmousemove="setPixel(event);"></canvas>
-  </body>
+
+        .project-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
+        }
+
+        .project-card img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            margin-bottom: 12px;
+        }
+
+        .project-card a {
+            text-decoration: none;
+            color: #0078d4;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Home</h1>
+    <p>Demo projects</p>
+    <div class="projects-list">
+        <div class="project-card">
+            <a href="water_ripples/index.html">
+                <img src="water_ripples/teemo.png" alt="Calculator">
+                <div>Water Ripples</div>
+            </a>
+        </div>
+        <div class="project-card">
+            <a href="algonum/index.html">
+                <img src="algonum/phi.png" alt="Calculator">
+                <div>Phi approximation - 2017</div>
+            </a>
+        </div>
+</body>
+
 </html>
