@@ -1,0 +1,353 @@
+.unSelectable { 
+        -moz-user-select: none; 
+        -khtml-user-select: none; 
+        -webkit-user-select: none; 
+        -o-user-select: none; 
+} 
+
+body{
+	background-color: #A3CEE2;
+}
+
+#world{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 600px;
+	height: 600px;
+	border: solid rgb(204,153,51) 20px;
+	background-color: #A3CEE21;
+}
+
+
+#menu{
+	position: absolute;
+	top: 0px;
+	left: 640px;
+	width: 150px;
+	height: 600px;
+	background-color: #E0C166;
+	border-style: solid;
+	border-color: rgb(204,153,51);
+	border-width: 20px 20px 20px 0px;
+}
+
+
+#gameoverWindow{
+	position: absolute;
+	display: table;
+	top: 33%;
+	left: 33%;
+	z-index: 100;
+	margin: auto;
+	width: 33%;
+	height: 17.5%;
+	border: solid rgb(204,153,51) 5px;
+	border-radius: 10px;
+	text-align: center;
+	background-color: #E0C166;
+	box-shadow: 10px 10px 40px 0px rgba(0,0,0,0.5);
+	opacity: 0;
+}
+
+#gameoverWindow > p{
+	display: table-cell;
+	vertical-align: middle;
+}
+
+
+#btnOptions{
+	display: table;
+	margin: 10% auto 10% auto;
+	width: 100px;
+	height: 5%;
+	text-align: center;
+	border-radius: 10px;
+	background-color: #5BC96E;
+}
+#btnOptions > p{
+	display: table-cell;
+	vertical-align: middle;
+}
+#btnOptions:hover{
+	background-color: #3D8649;
+	cursor: pointer;
+}
+#btnOptions:active{
+	background-color: #3D8649;
+	cursor: pointer;
+	box-shadow: inset 5px 5px 5px #142C18;
+}
+
+#btnPlay{
+	display: table;
+	margin: 10% auto 10% auto;
+	width: 100px;
+	height: 10%;
+	text-align: center;
+	border-radius: 10px;
+	background-color: #5BC96E;
+}
+#btnPlay > p{
+	display: table-cell;
+	vertical-align: middle;
+}
+#btnPlay:hover{
+	background-color: #3D8649;
+	cursor: pointer;
+}
+#btnPlay:active{
+	background-color: #3D8649;
+	cursor: pointer;
+	box-shadow: inset 5px 5px 5px #142C18;
+}
+
+#btnPause{
+	position: absolute;
+	bottom: 0;
+	display: table;
+	margin: 5% auto 0px auto;
+	width: 100%;
+	height: 50px;
+	text-align: center;
+	border-radius: 50% 50% 0px 0px;
+	background-color: #5BC96E;
+}
+#btnPause > p{
+	display: table-cell;
+	vertical-align: middle;
+}
+#btnPause:hover{
+	background-color: #3D8649;
+	cursor: pointer;
+}
+#btnPause:active{
+	background-color: #3D8649;
+	cursor: pointer;
+	box-shadow: inset 5px 5px 5px #142C18;
+}
+
+
+#scoreDiv{
+	margin: 15% auto 15% auto;
+	width: 100px;
+	text-align: center;
+	border: solid black 3px;
+	border-radius: 5px;
+	border-color: rgb(204,153,51);
+	padding: 10px;
+}
+
+#bestScores{
+	margin: 15% auto 0% auto;
+	width: 100px;
+	height: 45%;
+	text-align: center;
+	border: solid black 3px;
+	border-radius: 5px;
+	border-color: rgb(204,153,51);
+	padding: 0 10px 0 10px;
+}
+
+#highScores{
+	position: relative;
+	width: 100px;
+	height: 30px;
+	text-align: center;
+	border-width: 0px 0px 2px 0px;
+	border-style: solid;
+	border-color: rgb(204,153,51);
+}
+
+
+#options{
+	position: absolute;
+	top: 0px;
+	left: 810px;
+	width: 150px;
+	height: 600px;
+	background-color: #E0C166;
+	border-style: solid;
+	border-color: rgb(204,153,51);
+	border-width: 20px 20px 20px 0px;
+}
+
+.optionsWindow{
+	width: 100%;
+	text-align: center;
+	border-width: 0 0 5px 0;
+	border-style: solid;
+	border-color: rgb(204,153,51);
+}
+
+.snakeColor{
+	display: block;
+	margin: 10% auto 10% auto;
+	width: 60px;
+	height: 20px;
+	text-align: center;
+	background-color: #5BC96E;
+}
+.snakeColor:hover{
+	width: 120px;
+	cursor: pointer;
+}
+
+
+.colorHead{
+	width: 20px;
+	height: 20px;
+	text-align: left;
+}
+
+#original{
+	background-color: rgb(100, 200, 0);
+}
+#original > div{
+	background-color: rgb(66, 139, 202);
+}
+
+#blackAndWhite{
+	background-color: rgb(150, 150, 150);
+}
+#blackAndWhite > div{
+	background-color: rgb(123, 125, 123);
+}
+
+#flash{
+	background-color: rgb(11, 255, 1);
+}
+#flash > div{
+	background-color: rgb(1, 30, 254);
+}
+
+#iceCream{
+	background-color: rgb(194, 242, 208);
+}
+#iceCream > div{
+	background-color: rgb(255, 197, 217);
+}
+
+.speedWindow{
+	width: auto;
+	text-align: center;
+	padding: 4px 0 6px 0;
+}
+
+.speedWindow > p{
+	margin: 0;
+	padding-bottom: 4px;
+}
+
+.btnSpeed{
+	display: inline-block;
+	height: 25px;
+	width: auto;
+	min-width: 40px;
+	padding: 5px 2px 0px 2px;
+	border-radius: 10px;
+	background-color: #5BC96E;
+}
+.btnSpeed:hover{
+	background-color: #3D8649;
+	cursor: pointer;
+}
+
+#btnBot{
+	display: inline-block;
+	height: 20px;
+	width: 80px;
+	padding: 5px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border-radius: 10px;
+	background-color: #5BC96E;
+}
+#btnBot:hover{
+	background-color: #3D8649;
+	cursor: pointer;
+}
+
+#btnWalls{
+	display: table;
+	margin: 10% auto 10% auto;
+	width: 80%;
+	height: 50px;
+	text-align: center;
+	border-radius: 10px 10px 10px 10px;
+	background-color: #5BC96E;
+}
+#btnWalls > p{
+	display: table-cell;
+	vertical-align: middle;
+}
+#btnWalls:hover{
+	background-color: #3D8649;
+	cursor: pointer;
+}
+#btnWalls:active{
+	background-color: #3D8649;
+	cursor: pointer;
+	box-shadow: inset 5px 5px 5px #142C18;
+}
+
+.groupCmd > div{
+	display: inline-block;
+	min-width: 45px;
+	margin: 10px 0px 10px 5px;
+}
+
+#cmdLeft,#cmdUp,#cmdRight,#cmdDown{
+	width: 80px;
+	height: 20px;
+	padding: 2px;
+	text-align: center;
+	border-radius: 10px 10px 10px 10px;
+	background-color: #5BC96E;
+}
+
+#cmdLeft:hover,#cmdUp:hover,#cmdRight:hover,#cmdDown:hover{
+	background-color: #3D8649;
+	cursor: pointer;
+}
+
+#copyright{
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
