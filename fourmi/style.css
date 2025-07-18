@@ -1,0 +1,50 @@
+#canvas{
+	border: solid 1px black;
+	float: left;
+}
+
+#wrapper{
+	position: absolute;
+	left: 900px;
+}
+#wrapper2{
+	position: absolute;
+	left: 1010px;
+}
+
+.jscolor{
+	width: 80px;
+	margin: 20px;
+}
+
+.btn:hover{
+	cursor: pointer;
+	background-color: lightgrey;
+}
+
+
+.choixColor{
+	display: box;
+	width: 200px;
+	height: 80px;
+	border: solid 2px grey;
+	margin: 10px;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.choix{
+	display: box;
+	width: 100px;
+	height: 80px;
+	border: solid 2px grey;
+	margin: 10px;
+	text-align: center;
+	padding-top: 10px;
+	background-size: 100%;
+	background-repeat: no-repeat;
+    background-position: center;
+}
+.choix:hover{
+	cursor: pointer;
+}

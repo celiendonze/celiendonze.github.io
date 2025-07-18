@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+        <title>langton's ant</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+
+	<canvas id="canvas" width="800" height="800"></canvas>
+	<div id="wrapper">
+		<div class="choix" id="choix0" onclick="choix.change(0);"></div>
+		<div class="choix" id="choix1" onclick="choix.change(1);"></div>
+		<div class="choix" id="choix2" onclick="choix.change(2);"></div>
+		<div class="choix" id="choix3" onclick="choix.change(3);"></div>
+		<div class="choix" id="choix4" onclick="choix.change(4);"></div>
+		<div class="choix btn" id="vitesse" onclick="changeVitesse();">(cliquer ici pour commencer)</div>
+		<div class="choix btn" id="reinit" onclick="ant.init();">reinitialiser</div>
+	</div>
+	<div id="wrapper2">
+		<div class="choixColor"><input id="color0" class="jscolor" value="abf0ff"></div>
+		<div class="choixColor"><input id="color1" class="jscolor" value="81cfdb"></div>
+		<div class="choixColor"><input id="color2" class="jscolor" value="6393b6"></div>
+		<div class="choixColor"><input id="color3" class="jscolor" value="9fdfff"></div>
+		<div class="choixColor"><input id="color4" class="jscolor" value="518ed2"></div>
+		<div class="choixColor btn" onclick="changeColors();">changer les couleurs</div>
+	</div>
+	
+	
+	
+	
+	<script src="jscolor.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="script.js"></script>
+</body>
+</html>
+

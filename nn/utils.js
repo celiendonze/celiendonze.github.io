@@ -1,21 +1,20 @@
 /**
  * Authors : Biloni Kim, Donzé Célien & Vorpe Fabien
  * Descrption : utils provide all utilitary functions
-*/
+ */
 
 /**
  * returns the argument of the highest value in the array
  */
 function argMax(array) {
     let argMax = 0;
-    let max = array[0]
+    let max = array[0];
     for(let i = 1 ; i < array.length ; i++) {
         if(array[i] > max) {
             max = array[i];
             argMax = i;
         }
     }
-
     return argMax;
 }
 
