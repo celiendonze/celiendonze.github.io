@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Lorkii | Snake</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery-2.2.0.js"></script>
+    <script src="jquery-ui.js"></script>
+    <link rel="icon" href="../favicon2.png" type="image/x-icon">
+</head>
+
+<body>
+    <div id="world">
+        <div id="gameoverWindow">
+            <p>GAME OVER <br><br> SCORE: <span id="scoreGameover">0</span></p>
+        </div>
+    </div>
+
+    <div id="menu">
+        <div class="unSelectable" id="btnOptions" onclick="option()">
+            <p>Options</p>
+        </div>
+
+        <div class="unSelectable" id="btnPlay" onclick="newGame()">
+            <p>New Game</p>
+        </div>
+
+        <div id="scoreDiv">
+            <p>SCORE: <span id="score">0</span></p>
+        </div>
+
+        <div id="bestScores">
+            <div id="highScores">
+                <p>HighScores</p>
+            </div>
+            <ol id="listScores">
+            </ol>
+        </div>
+
+        <div class="unSelectable" id="btnPause" onclick="playOnOff()">
+            <p>PAUSE</p>
+        </div>
+    </div>
+
+
+
+    <div id="options">
+        <div class="optionsWindow colorWindow">
+            <div class="snakeColor" id="original" onclick="changecolor(0)">
+                <div class="colorHead"></div>
+            </div>
+            <div class="snakeColor" id="blackAndWhite" onclick="changecolor(1)">
+                <div class="colorHead"></div>
+            </div>
+            <div class="snakeColor" id="flash" onclick="changecolor(2)">
+                <div class="colorHead"></div>
+            </div>
+            <div class="snakeColor" id="iceCream" onclick="changecolor(3)">
+                <div class="colorHead"></div>
+            </div>
+        </div>
+
+        <div class="optionsWindow speedWindow">
+            <p>Speed:</p>
+            <div class="unSelectable btnSpeed" id="btnSpeed1" onclick="setSpeed(1)">Slow</div>
+            <div class="unSelectable btnSpeed" id="btnSpeed2" onclick="setSpeed(2)">Normal</div>
+            <div class="unSelectable btnSpeed" id="btnSpeed3" onclick="setSpeed(3)">Fast</div>
+        </div>
+
+        <div class="optionsWindow wallsWindow">
+            <div class="unSelectable" id="btnWalls" onclick="toggleWalls()">
+                <p>Walls ON</p>
+            </div>
+        </div>
+
+        <div class="optionsWindow cmdWindow">
+            <div class="groupCmd">
+                <div>Left: </div>
+                <div class="unSelectable" id="cmdLeft" onclick="setCmd(0)">37</div>
+            </div>
+            <div class="groupCmd">
+                <div>Up: </div>
+                <div class="unSelectable" id="cmdUp" onclick="setCmd(1)">38</div>
+            </div>
+            <div class="groupCmd">
+                <div>Right: </div>
+                <div class="unSelectable" id="cmdRight" onclick="setCmd(2)">39</div>
+            </div>
+            <div class="groupCmd">
+                <div>Down: </div>
+                <div class="unSelectable" id="cmdDown" onclick="setCmd(3)">40</div>
+            </div>
+        </div>
+
+
+
+        <div class="optionsWindow">
+            <div id="btnBot" onclick="autoMove()">
+                AutoPlay
+            </div>
+        </div>
+
+        <p id="copyright">&copy Célien Donzé 2016</p>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
