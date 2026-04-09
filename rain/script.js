@@ -183,34 +183,40 @@ function updateAutorunButton() {
 
 function update_graph() {
     graph = document.getElementById("graph");
-    Plotly.newPlot(
-        graph,
-        [{
-            x: scores.map((o) => o.speed),
-            y: scores.map((o) => o.count),
-            type: "scatter",
-            mode: "markers",
-        },
-        ],
-        {
-            title: { text: "Count vs Speed" },
-            xaxis: { title: { text: "Actor speed" } },
-            yaxis: { title: { text: "Count of raindrops" } },
-            shapes: [{
-                type: 'line',
-                xref: 'x',
-                yref: 'paper', // Scales from 0 (bottom) to 1 (top) of the plot area
-                x0: 6,
-                y0: 0,
-                x1: 6,
-                y1: 1,
-                line: {
+    const data = [{
+        x: scores.map((o) => o.speed),
+        y: scores.map((o) => o.count),
+        type: "scatter",
+        mode: "markers",
+    }]
+    const layout = {
+        title: { text: "Count vs Speed" },
+        xaxis: { title: { text: "Actor speed" } },
+        yaxis: { title: { text: "Count of raindrops" } },
+        shapes: [{
+            type: 'line',
+            xref: 'x',
+            yref: 'paper',
+            x0: 6,
+            y0: 0,
+            x1: 6,
+            y1: 1,
+            line: {
                 color: 'rgba(255, 0, 0, 0.5)',
                 width: 3,
-                dash: 'dash'  // Options: 'solid', 'dot', 'dash', 'longdash', etc.
-                }
-            }],
-        }
+                dash: 'dash'
+            }
+        }]
+
+    };
+    const config = {
+        displayModeBar: false
+    };
+    Plotly.newPlot(
+        graph,
+        data,
+        layout,
+        config
     );
 }
 
