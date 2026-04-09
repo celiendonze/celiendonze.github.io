@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rain Simulation</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <script src="https://cdn.plot.ly/plotly-2.18.2.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-3.4.0.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -58,12 +58,11 @@
                             oninput="update_speed();" aria-label="Speed" />
                     </div>
                 </div>
+                <div class="control-panel">
+                    <h2>Analytics</h2>
+                    <div id="graph"></div>
+                </div>
             </div>
-        </div>
-
-        <div class="control-panel">
-            <h2>Analytics</h2>
-            <div id="graph"></div>
         </div>
     </div>
 </body>

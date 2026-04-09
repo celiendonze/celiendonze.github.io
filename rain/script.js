@@ -142,6 +142,7 @@ function reset() {
     actor = new Actor(50, 100);
     count = 0;
     autorunActive = false;
+    updateAutorunButton();
 }
 
 function update_raindrops() {
@@ -184,18 +185,31 @@ function update_graph() {
     graph = document.getElementById("graph");
     Plotly.newPlot(
         graph,
-        [
-            {
-                x: scores.map((o) => o.speed),
-                y: scores.map((o) => o.count),
-                type: "scatter",
-                mode: "markers",
-            },
+        [{
+            x: scores.map((o) => o.speed),
+            y: scores.map((o) => o.count),
+            type: "scatter",
+            mode: "markers",
+        },
         ],
         {
-            title: "Raindrops count by speed",
-            xaxis: { title: "Speed" },
-            yaxis: { title: "Raindrops count" },
+            title: { text: "Count vs Speed" },
+            xaxis: { title: { text: "Actor speed" } },
+            yaxis: { title: { text: "Count of raindrops" } },
+            shapes: [{
+                type: 'line',
+                xref: 'x',
+                yref: 'paper', // Scales from 0 (bottom) to 1 (top) of the plot area
+                x0: 6,
+                y0: 0,
+                x1: 6,
+                y1: 1,
+                line: {
+                color: 'rgba(255, 0, 0, 0.5)',
+                width: 3,
+                dash: 'dash'  // Options: 'solid', 'dot', 'dash', 'longdash', etc.
+                }
+            }],
         }
     );
 }
@@ -220,6 +234,10 @@ function draw() {
         actor.draw(ctx);
         actor.move();
 
+        if (raindrops.length === 0) {
+            refillRaindrops();
+        }
+
         raindrops.forEach((raindrop) => {
             raindrop.draw(ctx);
         });
@@ -243,5 +261,6 @@ function draw() {
         ctx.fillText("Average rain speed: " + average_rain_speed, 5, 60);
     }
 
+    update_graph();
     requestAnimationFrame(draw);
 }
