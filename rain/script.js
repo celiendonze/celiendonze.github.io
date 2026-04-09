@@ -66,12 +66,14 @@ class Actor {
                     count: count,
                 });
                 update_graph();
-                if (this.autorun) {
+                if (autorunActive) {
                     this.speed += 1;
                     if (this.speed > 20) {
                         this.speed = 1;
                     }
-                    go();
+                    actor.position.x = 0;
+                    count = 0;
+                    this.running = true;
                 }
             }
         }
@@ -139,6 +141,7 @@ function reset() {
     refillRaindrops();
     actor = new Actor(50, 100);
     count = 0;
+    autorunActive = false;
 }
 
 function update_raindrops() {
@@ -159,8 +162,22 @@ function go() {
     actor.running = true;
 }
 
+let autorunActive = false;
+
 function autorun() {
-    actor.autorun = true;
+    autorunActive = !autorunActive;
+    if (autorunActive) {
+        actor.running = true;
+    } else {
+        actor.running = false;
+        reset();
+    }
+    updateAutorunButton();
+}
+
+function updateAutorunButton() {
+    const autorunBtn = document.getElementById("autorun-btn");
+    autorunBtn.classList.toggle("active", autorunActive);
 }
 
 function update_graph() {

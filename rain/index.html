@@ -2,69 +2,426 @@
 <html lang="en-US">
     <head>
         <meta charset="utf-8" />
-        <title>Rain simulation</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Rain Simulation</title>
         <script src="https://cdn.plot.ly/plotly-2.18.2.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
         <style>
+            :root {
+                --bg-primary: #0f0f23;
+                --bg-secondary: #1a1a3e;
+                --bg-tertiary: #252560;
+                --accent-primary: #667eea;
+                --accent-secondary: #764ba2;
+                --accent-tertiary: #ee9ca7;
+                --text-primary: #ffffff;
+                --text-secondary: #a0a0b0;
+                --text-muted: #6e6e85;
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
             body {
-                background-color: lightgray;
+                font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+                background-color: var(--bg-primary);
+                color: var(--text-primary);
+                min-height: 100vh;
+                padding: 2rem;
+                line-height: 1.5;
             }
-            canvas,
-            #graph {
-                border: 1px solid black;
+
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
             }
-            #options {
+
+            header {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                font-weight: 700;
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-primary),
+                    var(--accent-secondary)
+                );
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 0.5rem;
+            }
+
+            .subtitle {
+                color: var(--text-secondary);
+                font-size: 1rem;
+                font-weight: 400;
+            }
+
+            .main-grid {
                 display: grid;
-                grid-gap: 3px;
-                width: 300px;
+                grid-template-columns: 1fr 350px;
+                gap: 2rem;
+                margin-bottom: 2rem;
             }
-            #options > div {
-                display: flex;
-                justify-content: center;
-                align-items: center;
+
+            @media (max-width: 1200px) {
+                .main-grid {
+                    grid-template-columns: 1fr;
+                }
             }
-            #options > div > p {
-                width: 100px;
+
+            .canvas-wrapper {
+                background: var(--bg-secondary);
+                border-radius: 12px;
+                padding: 1.5rem;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             }
-            input {
+
+            canvas {
                 width: 100%;
+                height: auto;
+                border-radius: 8px;
+                border: 1px solid var(--bg-tertiary);
+                display: block;
+                background: linear-gradient(180deg, #e3f2fd 0%, #bbdefb 100%);
+            }
+
+            .sidebar {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .control-panel {
+                background: var(--bg-secondary);
+                border-radius: 12px;
+                padding: 1.5rem;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            }
+
+            .control-panel h2 {
+                font-size: 1.125rem;
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+                color: var(--text-primary);
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .control-panel h2::before {
+                content: "";
+                width: 3px;
+                height: 1.25em;
+                background: linear-gradient(
+                    180deg,
+                    var(--accent-primary),
+                    var(--accent-secondary)
+                );
+                border-radius: 2px;
+            }
+
+            .button-group {
+                display: flex;
+                gap: 0.75rem;
+                margin-bottom: 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            button {
+                flex: 1;
+                padding: 0.75rem 1rem;
+                border: none;
+                border-radius: 8px;
+                font-family: var(--accent-primary);
+                font-size: 0.875rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                background: var(--bg-tertiary);
+                color: var(--text-primary);
+                min-width: 80px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+
+            button:active {
+                transform: translateY(0);
+            }
+
+            button.primary {
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-primary),
+                    var(--accent-secondary)
+                );
+            }
+
+            button.primary:hover {
+                opacity: 0.9;
+            }
+
+button.toggle {
+                background: var(--bg-tertiary);
+            }
+
+            button.toggle:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            }
+
+            button.toggle.active {
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-primary),
+                    var(--accent-secondary)
+                ) !important;
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2),
+                    0 4px 12px rgba(102, 126, 234, 0.6);
+                transform: translateY(-2px);
+                color: white;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                button.toggle:hover {
+                    transform: none;
+                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                }
+            }
+
+            button.toggle:not(.active)::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.15);
+                border-radius: 8px;
+                animation: pulse 2s ease-in-out infinite;
+            }
+
+            button.toggle.active {
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-primary),
+                    var(--accent-secondary)
+                ) !important;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 0.3;
+                }
+                50% {
+                    opacity: 0.6;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                button.toggle::after {
+                    animation: none;
+                    opacity: 0.2;
+                }
+            }
+
+            .slider-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .slider-group:last-child {
+                margin-bottom: 0;
+            }
+
+            .slider-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 0.75rem;
+            }
+
+            .slider-label {
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                font-weight: 500;
+            }
+
+            .slider-value {
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: var(--accent-tertiary);
+                font-family: "Inter", monospace;
+            }
+
+            input[type="range"] {
+                width: 100%;
+                height: 6px;
+                border-radius: 3px;
+                background: var(--bg-tertiary);
+                outline: none;
+                -webkit-appearance: none;
+            }
+
+            input[type="range"]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-primary),
+                    var(--accent-secondary)
+                );
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            }
+
+            input[type="range"]::-webkit-slider-thumb:hover {
+                transform: scale(1.15);
+            }
+
+            input[type="range"]::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: linear-gradient(
+                    135deg,
+                    var(--accent-primary),
+                    var(--accent-secondary)
+                );
+                cursor: pointer;
+                border: none;
+                transition: transform 0.2s ease;
+            }
+
+            input[type="range"]::-moz-range-thumb:hover {
+                transform: scale(1.15);
+            }
+
+            .stats {
+                background: var(--bg-tertiary);
+                border-radius: 8px;
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+
+            .stat-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .stat-item:last-child {
+                border-bottom: none;
+            }
+
+            .stat-label {
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+                font-weight: 500;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+                font-weight: 600;
+                color: var(--text-primary);
+                font-family: "Inter", monospace;
             }
         </style>
     </head>
     <body onload="draw();">
-        <canvas id="canvas" width="1000" height="500"></canvas>
-        <div id="options">
-            <button onclick="reset();">reset</button>
-            <button onclick="go();">GO</button>
-            <button onclick="autorun();">autorun</button>
-            <div>
-                <p>Number of raindrops</p>
-                <p id="raindrops_value">500</p>
-                <input
-                    type="range"
-                    min="100"
-                    max="1000"
-                    step="100"
-                    value="500"
-                    id="number_of_raindrops"
-                    onchange="update_raindrops();"
-                />
+        <div class="container">
+            <header>
+                <h1>Rain Simulation</h1>
+                <p class="subtitle">
+                    Interactive physics simulation with collision detection and real-time
+                    analytics
+                </p>
+            </header>
+
+            <div class="main-grid">
+                <div class="canvas-wrapper">
+                    <canvas id="canvas" width="1000" height="500"></canvas>
+                </div>
+
+                <div class="sidebar">
+                    <div class="control-panel">
+                        <h2>Controls</h2>
+                        <div class="button-group">
+                            <button class="primary" onclick="go();" aria-label="Start once">
+                                GO Once
+                            </button>
+<button id="autorun-btn" class="toggle" onclick="autorun();" aria-label="Auto run">
+    Auto
+</button>
+                            <button onclick="reset();" aria-label="Reset">
+                                Reset
+                            </button>
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Number of raindrops</span>
+                                <span class="slider-value" id="raindrops_value">500</span>
+                            </div>
+<input
+                            type="range"
+                            min="100"
+                            max="1000"
+                            step="100"
+                            value="500"
+                            id="number_of_raindrops"
+                            oninput="update_raindrops();"
+                            aria-label="Number of raindrops"
+                        />
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <span class="slider-label">Actor speed</span>
+                                <span class="slider-value" id="speed_value">5</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="1"
+                                max="20"
+                                step="1"
+                                value="5"
+                                id="speed_range"
+                                onchange="update_speed();"
+                                aria-label="Speed"
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div>
-                <p>Speed</p>
-                <p id="speed_value">5</p>
-                <input
-                    type="range"
-                    min="1"
-                    max="20"
-                    step="1"
-                    value="5"
-                    class="slider"
-                    id="speed_range"
-                    onchange="update_speed();"
-                />
+
+            <div class="control-panel">
+                <h2>Analytics</h2>
+                <div id="graph"></div>
             </div>
         </div>
-        <div id="graph" style="width: 500px; height: 500px"></div>
     </body>
     <script type="text/javascript" src="script.js"></script>
 </html>
