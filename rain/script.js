@@ -68,7 +68,7 @@ class Actor {
                 update_graph();
                 if (autorunActive) {
                     this.speed += 1;
-                    if (this.speed > 20) {
+                    if (this.speed > 15) {
                         this.speed = 1;
                     }
                     actor.position.x = 0;
