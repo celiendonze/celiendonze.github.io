@@ -694,7 +694,13 @@ $(function () {
 
 	// Trigger initial responsive layout sizing
 	resizeGame();
-	$(window).on("resize", resizeGame);
+	
+	let resizeTimeout;
+	$(window).on("resize", function () {
+		resizeGame();
+		clearTimeout(resizeTimeout);
+		resizeTimeout = setTimeout(resizeGame, 200);
+	});
 });
 
 // Viewport Scaling Helper Functions
