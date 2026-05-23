@@ -282,6 +282,67 @@ function takeOffWinHand(de, num) {
 	playSFX(audioCoin[randNum]);
 }
 
+// Animate completed dice flying from top Win Hand to the right Goals panel
+function animateWinHandToGoal(indices, targetSelector, deValue) {
+	if (!indices || indices.length === 0) return;
+	
+	const targets = $(targetSelector);
+	if (targets.length === 0) return;
+
+	indices.forEach((winIdx, i) => {
+		const sourceEl = $(`#win${winIdx}`);
+		const targetEl = targets.eq(i);
+		if (sourceEl.length === 0 || targetEl.length === 0) return;
+
+		// Get absolute page coordinates
+		const startOffset = sourceEl.offset();
+		const endOffset = targetEl.offset();
+
+		// Create a floating, duplicate die element
+		const flying = $("<div class='flying-die'></div>").css({
+			position: "absolute",
+			left: startOffset.left,
+			top: startOffset.top,
+			width: sourceEl.width(),
+			height: sourceEl.height(),
+			backgroundImage: `url(img/d_${deValue}.png)`,
+			backgroundSize: "cover",
+			backgroundRepeat: "no-repeat",
+			backgroundPosition: "center",
+			borderRadius: "10px",
+			border: "2px solid black",
+			boxShadow: "0 4px 15px rgba(0, 0, 0, 0.6)",
+			zIndex: 1000,
+			opacity: 0.95
+		}).appendTo("body");
+
+		// 1. Position and scale slide animation
+		flying.animate({
+			left: endOffset.left,
+			top: endOffset.top,
+			width: targetEl.width(),
+			height: targetEl.height(),
+			opacity: 1
+		}, {
+			duration: 600,
+			easing: "swing",
+			complete: function () {
+				flying.remove();
+			}
+		});
+
+		// 2. Parallel spin rotation animation!
+		$({ deg: 0 }).animate({ deg: 360 }, {
+			duration: 600,
+			step: function (now) {
+				flying.css({
+					transform: `rotate(${now}deg)`
+				});
+			}
+		});
+	});
+}
+
 // Test win hand for goals
 function testWinHand() {
 	const counts = Array(6).fill(0);
@@ -293,6 +354,12 @@ function testWinHand() {
 			if (n >= 5) {
 				goal.yahtzee = true;
 				goal.yahtzeenum = i + 1;
+				// Capture indices before they are cleared from winHand array
+				const indices = [];
+				winHand.forEach((val, idx) => {
+					if (val === i + 1 && indices.length < 5) indices.push(idx);
+				});
+				animateWinHandToGoal(indices, "#yahtzee div", i + 1);
 				takeOffWinHand(i + 1, 5);
 			}
 		});
@@ -303,6 +370,11 @@ function testWinHand() {
 			if (n >= 4) {
 				goal.carre = true;
 				goal.carrenum = i + 1;
+				const indices = [];
+				winHand.forEach((val, idx) => {
+					if (val === i + 1 && indices.length < 4) indices.push(idx);
+				});
+				animateWinHandToGoal(indices, "#carre div", i + 1);
 				takeOffWinHand(i + 1, 4);
 			}
 		});
@@ -316,6 +388,18 @@ function testWinHand() {
 					if (j !== i && counts[j] >= 2) {
 						goal.full = true;
 						goal.full2 = j + 1;
+						
+						// Capture indices for full house components
+						const indices3 = [];
+						const indices2 = [];
+						winHand.forEach((val, idx) => {
+							if (val === i + 1 && indices3.length < 3) indices3.push(idx);
+							else if (val === j + 1 && indices2.length < 2) indices2.push(idx);
+						});
+						
+						animateWinHandToGoal(indices3, ".full3", i + 1);
+						animateWinHandToGoal(indices2, ".full2", j + 1);
+						
 						takeOffWinHand(i + 1, 3);
 						takeOffWinHand(j + 1, 2);
 						break;
@@ -334,6 +418,18 @@ function testWinHand() {
 					if (counts[j] >= 2) {
 						goal.doublePaire = true;
 						goal.dp2 = j + 1;
+						
+						// Capture indices for double pair components
+						const indices1 = [];
+						const indices2 = [];
+						winHand.forEach((val, idx) => {
+							if (val === i + 1 && indices1.length < 2) indices1.push(idx);
+							else if (val === j + 1 && indices2.length < 2) indices2.push(idx);
+						});
+						
+						animateWinHandToGoal(indices1, ".dp1", i + 1);
+						animateWinHandToGoal(indices2, ".dp2", j + 1);
+						
 						takeOffWinHand(i + 1, 2);
 						takeOffWinHand(j + 1, 2);
 						break;
@@ -347,6 +443,11 @@ function testWinHand() {
 	counts.forEach((n, i) => {
 		if (n >= 3 && !goal.brelan[i]) {
 			goal.brelan[i] = true;
+			const indices = [];
+			winHand.forEach((val, idx) => {
+				if (val === i + 1 && indices.length < 3) indices.push(idx);
+			});
+			animateWinHandToGoal(indices, `#brelan${i + 1} div`, i + 1);
 			takeOffWinHand(i + 1, 3);
 		}
 	});
