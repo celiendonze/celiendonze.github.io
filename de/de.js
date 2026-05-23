@@ -15,6 +15,27 @@ const audioCoin = [
 const audioDice = new Audio('sound/dice.wav');
 const audioWin = new Audio('sound/win.wav');
 
+// Robust Audio Utility
+function playSFX(audio, volume = 0.35) {
+	if (!audio) return;
+	try {
+		// Clone node to allow rapid overlapping plays of the same sound effect
+		const clone = audio.cloneNode();
+		clone.volume = volume;
+		const playPromise = clone.play();
+		if (playPromise !== undefined) {
+			playPromise.catch(error => {
+				// Catch browser autoplay permission delays silently
+				console.log("Audio playback delayed or blocked by browser policies:", error);
+			});
+		}
+	} catch (e) {
+		// Fallback to resetting current time if cloning fails
+		audio.currentTime = 0;
+		audio.play().catch(err => console.log("Audio play error fallback:", err));
+	}
+}
+
 // Game State
 let position1 = { x: 0, y: 0, set: false };
 let position2 = { x: 0, y: 0, set: false };
@@ -28,6 +49,88 @@ let goal = {
 };
 let win = { x: 0, y: 0 };
 let winHand = Array(GRID_HEIGHT).fill(0);
+
+// Local Highscores Helpers
+function getHighscores() {
+	try {
+		const scores = localStorage.getItem("de_highscores");
+		return scores ? JSON.parse(scores) : [];
+	} catch (e) {
+		return [];
+	}
+}
+
+function saveLocalHighscore(pseudo, score) {
+	const scores = getHighscores();
+	scores.push({ pseudo: pseudo, score: score, date: new Date().toLocaleDateString() });
+	// Sort descending
+	scores.sort((a, b) => b.score - a.score);
+	// Keep top 5 only
+	scores.splice(5);
+	try {
+		localStorage.setItem("de_highscores", JSON.stringify(scores));
+	} catch (e) {
+		console.error("Failed to save highscore to localStorage", e);
+	}
+}
+
+function post_highscore() {
+	let pseudo = $("#de_pseudo").val();
+	if (!pseudo || pseudo.trim() === "") {
+		pseudo = "Anonymous";
+		$("#de_pseudo").val(pseudo);
+	}
+	if (game.scoreFinal !== 0) {
+		saveLocalHighscore(pseudo, game.scoreFinal);
+	}
+	$("#form_highscore").hide();
+	$("#ty_partage").show();
+}
+
+function showHighscoresMenu() {
+	const scores = getHighscores();
+	let html = `<h3>TOP 5 SCORES:</h3>`;
+	if (scores.length === 0) {
+		html += `<p>Aucun score enregistré pour le moment.</p>`;
+	} else {
+		html += `<table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9em; text-align: left;">
+					<thead>
+						<tr style="border-bottom: 2px solid white;">
+							<th style="padding: 5px;">Pos</th>
+							<th style="padding: 5px;">Pseudo</th>
+							<th style="padding: 5px; text-align: right;">Score</th>
+							<th style="padding: 5px; text-align: right;">Date</th>
+						</tr>
+					</thead>
+					<tbody>`;
+		scores.forEach((s, idx) => {
+			html += `<tr style="border-bottom: 1px solid #444;">
+						<td style="padding: 5px;">${idx + 1}</td>
+						<td style="padding: 5px; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${s.pseudo}</td>
+						<td style="padding: 5px; text-align: right; font-weight: bold; color: #1b85b8;">${s.score}</td>
+						<td style="padding: 5px; text-align: right; font-size: 0.85em; color: #aaa;">${s.date}</td>
+					</tr>`;
+		});
+		html += `</tbody></table>`;
+	}
+	html += `<button onclick="showRulesMenu();" style="margin: 20px auto 0 auto; display: block; padding: 10px; font-size: 18px; border-radius: 5px; background: #1b85b8; color: white; border: none; cursor: pointer; width: 120px;">Retour</button>`;
+	$("#info").html(html);
+}
+
+function showRulesMenu() {
+	$("#info").html(
+		`<h3>INFO:</h3>
+		<p>
+			Choisissez un dé et permutez-le avec un dé voisin pour qu'un de ces deux dés touche un dé de valeur
+			identique et forme une combinaison de trois dés ou plus de la même valeur. La valeur du dé est
+			ensuite ajoutée à
+			votre main.
+		</p>
+		<p>
+			Le but du jeu est d'obtenir toutes les suites possibles (à droite -->).
+		</p>`
+	);
+}
 
 // Grid Creation
 function createGrid() {
@@ -72,21 +175,36 @@ function setWinHand() {
 // Update goals UI
 function setGoals() {
 	goal.brelan.forEach((brelan, i) => {
-		$(`#brelan${i + 1} div`).css("opacity", brelan ? "1" : "0.4");
+		const brelanEl = $(`#brelan${i + 1}`);
+		brelanEl.toggleClass("goal_done", brelan);
+		brelanEl.find("div").css("opacity", brelan ? "1" : "0.4");
 	});
-	$("#doublePaire div").css("opacity", goal.doublePaire ? "1" : "0.5");
+	
+	const dpEl = $("#doublePaire");
+	dpEl.toggleClass("goal_done", goal.doublePaire);
+	dpEl.find("div").css("opacity", goal.doublePaire ? "1" : "0.5");
 	$(".dp1").css("backgroundImage", `url(img/d_${goal.dp1 || 0}.png)`);
 	$(".dp2").css("backgroundImage", `url(img/d_${goal.dp2 || "0b"}.png)`);
-	$("#full div").css("opacity", goal.full ? "1" : "0.5");
+	
+	const fullEl = $("#full");
+	fullEl.toggleClass("goal_done", goal.full);
+	fullEl.find("div").css("opacity", goal.full ? "1" : "0.5");
 	$(".full2").css("backgroundImage", `url(img/d_${goal.full2 || 0}.png)`);
 	$(".full3").css("backgroundImage", `url(img/d_${goal.full3 || "0b"}.png)`);
-	$("#carre div").css("opacity", goal.carre ? "1" : "0.5");
+	
+	const carreEl = $("#carre");
+	carreEl.toggleClass("goal_done", goal.carre);
+	carreEl.find("div").css("opacity", goal.carre ? "1" : "0.5");
 	$("#carre div").css("backgroundImage", `url(img/d_${goal.carrenum || 0}.png)`);
-	$("#yahtzee div").css("opacity", goal.yahtzee ? "1" : "0.5");
+	
+	const yEl = $("#yahtzee");
+	yEl.toggleClass("goal_done", goal.yahtzee);
+	yEl.find("div").css("opacity", goal.yahtzee ? "1" : "0.5");
 	$("#yahtzee div").css("backgroundImage", `url(img/d_${goal.yahtzeenum || 0}.png)`);
+	
 	$("#score").text(game.score);
 	if (testWin()) {
-		audioWin.play();
+		playSFX(audioWin, 0.15);
 		setTimeout(gameOver, 1000);
 	}
 }
@@ -103,22 +221,32 @@ function gameOver() {
 	const scoreinter = game.movesLeft * 500;
 	game.scoreFinal = scoreinter + game.score;
 	$("#info").html(
-		`<p>score: ${game.score}</p>
+		`<h3>PARTIE TERMINÉE</h3>
+		 <p>score: ${game.score}</p>
 		 <p>+</p>
-		 <p>coups restants: ${scoreinter}</p>
-		 <p>=</p>
-		 <p>Score final: ${game.scoreFinal}</p>`
+		 <p>coups restants: ${game.movesLeft} x 500 = ${scoreinter}</p>
+		 <p style="font-size: 1.3em; font-weight: bold; border-top: 1px dashed white; padding-top: 5px;">Score final: ${game.scoreFinal}</p>`
 	);
 	$("#menu").show();
 	$("#form_highscore").show();
+	$("#ty_partage").hide();
 }
 
 // New Game
 function newGame() {
+	// Call initGame to prepare board generation state
 	initGame();
 	createGrid();
+	
+	// testGrid matches any natural combos generated on startup and refills the board.
 	testGrid(true);
+	
+	// Call initGame a second time to wipe score & win hand to 0 so the player starts clean
+	// with a fresh, match-free starting board.
 	initGame();
+	
+	showRulesMenu();
+	$("#de_pseudo").val("");
 	$("#menu, #form_highscore, #ty_partage").hide();
 }
 
@@ -151,7 +279,7 @@ function takeOffWinHand(de, num) {
 	if (num === 3) game.score += 1000;
 	if (num === 4) game.score += 2000;
 	if (num === 5) game.score += 5000;
-	audioCoin[randNum].play();
+	playSFX(audioCoin[randNum]);
 }
 
 // Test win hand for goals
@@ -227,7 +355,7 @@ function testWinHand() {
 	setGoals();
 }
 
-// Check for holes in grid
+// Check if there is holes in grid
 function thereIsHoles() {
 	for (let x = 0; x < GRID_WIDTH; x++) {
 		for (let y = 0; y < GRID_HEIGHT; y++) {
@@ -279,20 +407,25 @@ function takeOff(positionX, positionY, number, direction) {
 // Main grid test
 function testGrid(init = false) {
 	let bool = false;
-	// Horizontal
+	
+	// Horizontal match detection
 	for (let y = 0; y < GRID_HEIGHT; y++) {
 		let img = $(`#0_${y}`).css("backgroundImage");
 		let num = 1;
 		win.x = 0;
 		win.y = y;
+		
+		// Loop up to GRID_WIDTH (inclusive) to process matches at the grid's rightmost edge.
 		for (let x = 1; x <= GRID_WIDTH; x++) {
-			const testimg = $(`#${x}_${y}`).css("backgroundImage");
-			if (img === testimg) {
+			// Clean boundary checks: do not query jQuery for non-existent DOM element `#10_y`.
+			const testimg = (x < GRID_WIDTH) ? $(`#${x}_${y}`).css("backgroundImage") : null;
+			
+			if (img && testimg && img === testimg) {
 				num++;
 			} else {
 				if (num >= 3) {
 					takeOff(win.x, win.y, num, "hor");
-					if (!init) audioDice.play();
+					if (!init) playSFX(audioDice);
 					bool = true;
 				}
 				win.x = x;
@@ -301,20 +434,25 @@ function testGrid(init = false) {
 			img = testimg;
 		}
 	}
-	// Vertical
+	
+	// Vertical match detection
 	for (let x = 0; x < GRID_WIDTH; x++) {
 		let img = $(`#${x}_0`).css("backgroundImage");
 		let num = 1;
 		win.x = x;
 		win.y = 0;
+		
+		// Loop up to GRID_HEIGHT (inclusive) to process matches at the grid's bottommost edge.
 		for (let y = 1; y <= GRID_HEIGHT; y++) {
-			const testimg = $(`#${x}_${y}`).css("backgroundImage");
-			if (img === testimg) {
+			// Clean boundary checks: do not query jQuery for non-existent DOM element `#x_7`.
+			const testimg = (y < GRID_HEIGHT) ? $(`#${x}_${y}`).css("backgroundImage") : null;
+			
+			if (img && testimg && img === testimg) {
 				num++;
 			} else {
 				if (num >= 3) {
 					takeOff(win.x, win.y, num, "ver");
-					if (!init) audioDice.play();
+					if (!init) playSFX(audioDice);
 					bool = true;
 				}
 				win.y = y;
@@ -323,6 +461,7 @@ function testGrid(init = false) {
 			img = testimg;
 		}
 	}
+	
 	if (init) {
 		fillGrid(init);
 	} else {
@@ -341,60 +480,97 @@ function canBeSwitched(x1, y1, x2, y2) {
 
 // Play move
 function play(x, y) {
+	// Block play if the game is over
+	if (game.movesLeft < 1 || testWin()) return;
+
 	if (!position1.set) {
 		position1 = { x, y, set: true };
 		$(`#${x}_${y}`).addClass("de_clicked");
-	} else if (!position2.set) {
-		position2 = { x, y, set: true };
-		$(`#${x}_${y}`).addClass("de_clicked");
-	}
-	if (position1.set && position2.set) {
-		const img1 = $(`#${position1.x}_${position1.y}`).css("backgroundImage");
-		const img2 = $(`#${position2.x}_${position2.y}`).css("backgroundImage");
-		if (canBeSwitched(position1.x, position1.y, position2.x, position2.y)) {
-			$(`#${position1.x}_${position1.y}`).css("backgroundImage", img2);
-			$(`#${position2.x}_${position2.y}`).css("backgroundImage", img1);
+	} else {
+		// If they click the same selected die, deselect it
+		if (position1.x === x && position1.y === y) {
+			$(`#${position1.x}_${position1.y}`).removeClass("de_clicked");
+			position1.set = false;
+			return;
 		}
-		$(`#${position1.x}_${position1.y}`).removeClass("de_clicked");
-		$(`#${position2.x}_${position2.y}`).removeClass("de_clicked");
-		position1.set = position2.set = false;
-		if (!testGrid()) {
-			$(`#${position1.x}_${position1.y}`).css("backgroundImage", img1);
-			$(`#${position2.x}_${position2.y}`).css("backgroundImage", img2);
-		} else {
-			game.movesLeft--;
-			$("#movesLeft").text(game.movesLeft);
-			if (game.movesLeft < 1) gameOver();
-		}
-	}
-}
 
-// Highscore post
-function post_highscore() {
-	const today = Math.floor(Date.now() / 1000);
-	if ($("#de_pseudo").val() === "") $("#de_pseudo").val("Anonymous");
-	if (game.scoreFinal !== 0) {
-		$.post("php/de_post.php", {
-			de_pseudo: $("#de_pseudo").val(),
-			de_score: game.scoreFinal,
-			de_date: today
-		});
+		if (canBeSwitched(position1.x, position1.y, x, y)) {
+			// Swap targets adjacent: proceed with move
+			position2 = { x, y, set: true };
+
+			const p1 = $(`#${position1.x}_${position1.y}`);
+			const p2 = $(`#${position2.x}_${position2.y}`);
+
+			const img1 = p1.css("backgroundImage");
+			const img2 = p2.css("backgroundImage");
+
+			// Get absolute layout positions
+			const left1 = position1.x * CELL_SIZE;
+			const top1 = position1.y * CELL_SIZE;
+			const left2 = position2.x * CELL_SIZE;
+			const top2 = position2.y * CELL_SIZE;
+
+			// Highlight active swap visual layer
+			p1.css("z-index", 15);
+			p2.css("z-index", 15);
+
+			const prevPos1 = { x: position1.x, y: position1.y };
+			const prevPos2 = { x: position2.x, y: position2.y };
+
+			// Deselect elements instantly before sliding
+			p1.removeClass("de_clicked");
+			p2.removeClass("de_clicked");
+
+			position1.set = position2.set = false;
+
+			// Slide elements to each other's coordinates
+			$.when(
+				p1.animate({ left: left2, top: top2 }, 250),
+				p2.animate({ left: left1, top: top1 }, 250)
+			).then(function () {
+				// Swap background images in the DOM
+				p1.css("backgroundImage", img2);
+				p2.css("backgroundImage", img1);
+
+				// Reset original coordinate layout positions
+				p1.css({ left: left1, top: top1, "z-index": "" });
+				p2.css({ left: left2, top: top2, "z-index": "" });
+
+				if (!testGrid()) {
+					// Swap failed: slide back
+					p1.css("z-index", 15);
+					p2.css("z-index", 15);
+
+					$.when(
+						p1.animate({ left: left2, top: top2 }, 200),
+						p2.animate({ left: left1, top: top1 }, 200)
+					).then(function () {
+						p1.css("backgroundImage", img1);
+						p2.css("backgroundImage", img2);
+						p1.css({ left: left1, top: top1, "z-index": "" });
+						p2.css({ left: left2, top: top2, "z-index": "" });
+					});
+				} else {
+					game.movesLeft--;
+					$("#movesLeft").text(game.movesLeft);
+					if (game.movesLeft < 1) gameOver();
+				}
+			});
+		} else {
+			// Smart Selection UX: Clicked non-adjacent die, select it as the new active die!
+			$(`#${position1.x}_${position1.y}`).removeClass("de_clicked");
+			position1 = { x, y, set: true };
+			$(`#${x}_${y}`).addClass("de_clicked");
+		}
 	}
-	$("#form_highscore").hide();
-	$("#ty_partage").show();
 }
 
 // UI setup
 $(function () {
-	const menuPosition = $("#win_area").offset();
-	$("#menu").offset(menuPosition);
-	$("#goal_area").css({
-		left: menuPosition.left + 810,
-		top: menuPosition.top
-	});
+	// Replaced JS coordinate-offset calculation with fully responsive flexbox-based layouts.
 	$("#form_highscore, #ty_partage").hide();
 
-	// Create grid elements
+	// Create grid elements dynamically
 	for (let x = 0; x < GRID_WIDTH; x++) {
 		for (let y = 0; y < GRID_HEIGHT; y++) {
 			$(document.createElement("div"))

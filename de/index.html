@@ -9,45 +9,47 @@
 </head>
 
 <body>
-	<section>
-		<div id="menu">
-			<div id="info">
-				<h3>INFO:</h3>
-				<p>
-					Choisissez un dé et permutez-le avec un dé voisin pour qu'un de ces deux dés touche un dé de valeur
-					identique et forme une combinaison de trois dés ou plus de la même valeur. La valeur du dé est
-					ensuite ajoutée à
-					votre main.
-				</p>
-				<p>
-					Le but du jeu est d'obtenir toutes les suites possibles (à droite -->).
-				</p>
+	<section id="game_layout">
+		<div id="play_container">
+			<div id="menu">
+				<div id="info">
+					<h3>INFO:</h3>
+					<p>
+						Choisissez un dé et permutez-le avec un dé voisin pour qu'un de ces deux dés touche un dé de valeur
+						identique et forme une combinaison de trois dés ou plus de la même valeur. La valeur du dé est
+						ensuite ajoutée à
+						votre main.
+					</p>
+					<p>
+						Le but du jeu est d'obtenir toutes les suites possibles (à droite -->).
+					</p>
+				</div>
+				<div id="form_highscore">
+					<label for="de_pseudo">Pseudo:</label>
+					<input type="text" id="de_pseudo" />
+					<button onclick="post_highscore();">Ajouter mon score</button>
+				</div>
+				<div id="ty_partage">
+					<p>Merci pour votre partage</p>
+					<button onclick="showHighscoresMenu();" style="color: white; padding: 5px; border: 5px solid white; border-radius: 10px; background: transparent; cursor: pointer; font-size: 1em;">voir les scores</button>
+				</div>
+				<button id="new_game_btn" onclick="newGame();">Nouvelle Partie</button>
 			</div>
-			<!-- <div id="form_highscore">
-				<label for="de_pseudo">Pseudo:</label>
-				<input type="text" id="de_pseudo" />
-				<button onclick="post_highscore();">Ajouter mon score</button>
+			<div id="win_area">
+				<div id="win0" class="win"></div>
+				<div id="win1" class="win"></div>
+				<div id="win2" class="win"></div>
+				<div id="win3" class="win"></div>
+				<div id="win4" class="win"></div>
+				<div id="win5" class="win"></div>
+				<div id="win6" class="win"></div>
+				<div id="infoInGame">
+					<p>Mov. Restants: <span id="movesLeft">50</span></p>
+					<p>Score: <span id="score">0</span></p>
+				</div>
 			</div>
-			<div id="ty_partage">
-				<p>Merci pour votre partage</p>
-				<a href="highscores.php">voir les scores</a>
-			</div> -->
-			<button onclick="newGame();">Nouvelle Partie</button>
+			<div id="de_area"></div>
 		</div>
-		<div id="win_area">
-			<div id="win0" class="win"></div>
-			<div id="win1" class="win"></div>
-			<div id="win2" class="win"></div>
-			<div id="win3" class="win"></div>
-			<div id="win4" class="win"></div>
-			<div id="win5" class="win"></div>
-			<div id="win6" class="win"></div>
-			<div id="infoInGame">
-				<p>Mov. Restants: <span id="movesLeft">50</span></p>
-				<p>Score: <span id="score">0</span></p>
-			</div>
-		</div>
-		<div id="de_area"></div>
 		<div id="goal_area">
 			<div id="brelan1" class="goal">
 				<div></div>
