@@ -289,6 +289,8 @@ function animateWinHandToGoal(indices, targetSelector, deValue) {
 	const targets = $(targetSelector);
 	if (targets.length === 0) return;
 
+	const scale = getGameScale();
+
 	indices.forEach((winIdx, i) => {
 		const sourceEl = $(`#win${winIdx}`);
 		const targetEl = targets.eq(i);
@@ -303,15 +305,15 @@ function animateWinHandToGoal(indices, targetSelector, deValue) {
 			position: "absolute",
 			left: startOffset.left,
 			top: startOffset.top,
-			width: sourceEl.width(),
-			height: sourceEl.height(),
+			width: sourceEl.width() * scale,
+			height: sourceEl.height() * scale,
 			backgroundImage: `url(img/d_${deValue}.png)`,
 			backgroundSize: "cover",
 			backgroundRepeat: "no-repeat",
 			backgroundPosition: "center",
-			borderRadius: "10px",
-			border: "2px solid black",
-			boxShadow: "0 4px 15px rgba(0, 0, 0, 0.6)",
+			borderRadius: `${10 * scale}px`,
+			border: `${2 * scale}px solid black`,
+			boxShadow: `0 ${4 * scale}px ${15 * scale}px rgba(0, 0, 0, 0.6)`,
 			zIndex: 1000,
 			opacity: 0.95
 		}).appendTo("body");
@@ -320,8 +322,8 @@ function animateWinHandToGoal(indices, targetSelector, deValue) {
 		flying.animate({
 			left: endOffset.left,
 			top: endOffset.top,
-			width: targetEl.width(),
-			height: targetEl.height(),
+			width: targetEl.width() * scale,
+			height: targetEl.height() * scale,
 			opacity: 1
 		}, {
 			duration: 600,
@@ -689,4 +691,65 @@ $(function () {
 				.appendTo($("#de_area"));
 		}
 	}
+
+	// Trigger initial responsive layout sizing
+	resizeGame();
+	$(window).on("resize", resizeGame);
 });
+
+// Viewport Scaling Helper Functions
+function getGameScale() {
+	const layout = document.getElementById("game_layout");
+	if (!layout) return 1;
+	const transform = window.getComputedStyle(layout).transform;
+	if (transform && transform !== 'none') {
+		const values = transform.split('(')[1].split(')')[0].split(',');
+		return parseFloat(values[0]) || 1;
+	}
+	return 1;
+}
+
+function dismissRotationPrompt() {
+	$("body").addClass("bypass-prompt");
+	resizeGame();
+}
+
+function resizeGame() {
+	const scaler = $("#game_scaler");
+	const layout = $("#game_layout");
+	if (scaler.length === 0 || layout.length === 0) return;
+
+	// Reset styles to calculate natural dimensions
+	layout.css({
+		"transform": "",
+		"transform-origin": "",
+		"margin": ""
+	});
+	scaler.css("height", "");
+
+	const unscaledWidth = layout.outerWidth();
+	const unscaledHeight = layout.outerHeight();
+
+	// Calculate target scale to fit viewport beautifully with padding
+	const padding = 20;
+	const availableWidth = window.innerWidth - padding;
+	const availableHeight = window.innerHeight - padding;
+
+	const scaleX = availableWidth / unscaledWidth;
+	const scaleY = availableHeight / unscaledHeight;
+
+	// Scale down to fit the smaller dimension, capping max at 1.0 (no upscale)
+	let scale = Math.min(scaleX, scaleY);
+	if (scale > 1.0) scale = 1.0;
+	if (scale < 0.2) scale = 0.2; // Absolute safety floor
+
+	// Apply scale
+	layout.css({
+		"transform": `scale(${scale})`,
+		"transform-origin": "top center",
+		"margin": "0 auto"
+	});
+
+	// Adjust wrapper height to prevent overflow/scrolling
+	scaler.css("height", `${unscaledHeight * scale}px`);
+}

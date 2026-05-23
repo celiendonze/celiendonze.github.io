@@ -3,13 +3,28 @@
 
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>Jeu de Dés</title>
 	<link rel="icon" type="image/png" href="img/d_4.png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="de.css">
 </head>
 
 <body>
-	<section id="game_layout">
+	<div id="rotation_prompt">
+		<div class="prompt_content">
+			<div class="phone_icon">
+				<div class="phone_screen"></div>
+			</div>
+			<h2>Mode Paysage Recommandé</h2>
+			<p>Pour une expérience de jeu optimale, veuillez faire pivoter votre appareil en mode paysage.</p>
+			<button onclick="dismissRotationPrompt();" class="bypass_btn">Continuer en portrait</button>
+		</div>
+	</div>
+	<div id="game_scaler">
+		<section id="game_layout">
 		<div id="play_container">
 			<div id="menu">
 				<div id="info">
@@ -108,7 +123,8 @@
 				<div></div>
 			</div>
 		</div>
-	</section>
+		</section>
+	</div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 	<script src="de.js"></script>
 </body>
