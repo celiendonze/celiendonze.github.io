@@ -179,29 +179,29 @@ function setGoals() {
 		brelanEl.toggleClass("goal_done", brelan);
 		brelanEl.find("div").css("opacity", brelan ? "1" : "0.4");
 	});
-	
+
 	const dpEl = $("#doublePaire");
 	dpEl.toggleClass("goal_done", goal.doublePaire);
 	dpEl.find("div").css("opacity", goal.doublePaire ? "1" : "0.5");
 	$(".dp1").css("backgroundImage", `url(img/d_${goal.dp1 || 0}.png)`);
 	$(".dp2").css("backgroundImage", `url(img/d_${goal.dp2 || "0b"}.png)`);
-	
+
 	const fullEl = $("#full");
 	fullEl.toggleClass("goal_done", goal.full);
 	fullEl.find("div").css("opacity", goal.full ? "1" : "0.5");
 	$(".full2").css("backgroundImage", `url(img/d_${goal.full2 || 0}.png)`);
 	$(".full3").css("backgroundImage", `url(img/d_${goal.full3 || "0b"}.png)`);
-	
+
 	const carreEl = $("#carre");
 	carreEl.toggleClass("goal_done", goal.carre);
 	carreEl.find("div").css("opacity", goal.carre ? "1" : "0.5");
 	$("#carre div").css("backgroundImage", `url(img/d_${goal.carrenum || 0}.png)`);
-	
+
 	const yEl = $("#yahtzee");
 	yEl.toggleClass("goal_done", goal.yahtzee);
 	yEl.find("div").css("opacity", goal.yahtzee ? "1" : "0.5");
 	$("#yahtzee div").css("backgroundImage", `url(img/d_${goal.yahtzeenum || 0}.png)`);
-	
+
 	$("#score").text(game.score);
 	if (testWin()) {
 		playSFX(audioWin, 0.15);
@@ -237,14 +237,14 @@ function newGame() {
 	// Call initGame to prepare board generation state
 	initGame();
 	createGrid();
-	
+
 	// testGrid matches any natural combos generated on startup and refills the board.
 	testGrid(true);
-	
+
 	// Call initGame a second time to wipe score & win hand to 0 so the player starts clean
 	// with a fresh, match-free starting board.
 	initGame();
-	
+
 	showRulesMenu();
 	$("#de_pseudo").val("");
 	$("#menu, #form_highscore, #ty_partage").hide();
@@ -285,7 +285,7 @@ function takeOffWinHand(de, num) {
 // Animate completed dice flying from top Win Hand to the right Goals panel
 function animateWinHandToGoal(indices, targetSelector, deValue) {
 	if (!indices || indices.length === 0) return;
-	
+
 	const targets = $(targetSelector);
 	if (targets.length === 0) return;
 
@@ -390,7 +390,7 @@ function testWinHand() {
 					if (j !== i && counts[j] >= 2) {
 						goal.full = true;
 						goal.full2 = j + 1;
-						
+
 						// Capture indices for full house components
 						const indices3 = [];
 						const indices2 = [];
@@ -398,10 +398,10 @@ function testWinHand() {
 							if (val === i + 1 && indices3.length < 3) indices3.push(idx);
 							else if (val === j + 1 && indices2.length < 2) indices2.push(idx);
 						});
-						
+
 						animateWinHandToGoal(indices3, ".full3", i + 1);
 						animateWinHandToGoal(indices2, ".full2", j + 1);
-						
+
 						takeOffWinHand(i + 1, 3);
 						takeOffWinHand(j + 1, 2);
 						break;
@@ -420,7 +420,7 @@ function testWinHand() {
 					if (counts[j] >= 2) {
 						goal.doublePaire = true;
 						goal.dp2 = j + 1;
-						
+
 						// Capture indices for double pair components
 						const indices1 = [];
 						const indices2 = [];
@@ -428,10 +428,10 @@ function testWinHand() {
 							if (val === i + 1 && indices1.length < 2) indices1.push(idx);
 							else if (val === j + 1 && indices2.length < 2) indices2.push(idx);
 						});
-						
+
 						animateWinHandToGoal(indices1, ".dp1", i + 1);
 						animateWinHandToGoal(indices2, ".dp2", j + 1);
-						
+
 						takeOffWinHand(i + 1, 2);
 						takeOffWinHand(j + 1, 2);
 						break;
@@ -510,19 +510,19 @@ function takeOff(positionX, positionY, number, direction) {
 // Main grid test
 function testGrid(init = false) {
 	let bool = false;
-	
+
 	// Horizontal match detection
 	for (let y = 0; y < GRID_HEIGHT; y++) {
 		let img = $(`#0_${y}`).css("backgroundImage");
 		let num = 1;
 		win.x = 0;
 		win.y = y;
-		
+
 		// Loop up to GRID_WIDTH (inclusive) to process matches at the grid's rightmost edge.
 		for (let x = 1; x <= GRID_WIDTH; x++) {
 			// Clean boundary checks: do not query jQuery for non-existent DOM element `#10_y`.
 			const testimg = (x < GRID_WIDTH) ? $(`#${x}_${y}`).css("backgroundImage") : null;
-			
+
 			if (img && testimg && img === testimg) {
 				num++;
 			} else {
@@ -537,19 +537,19 @@ function testGrid(init = false) {
 			img = testimg;
 		}
 	}
-	
+
 	// Vertical match detection
 	for (let x = 0; x < GRID_WIDTH; x++) {
 		let img = $(`#${x}_0`).css("backgroundImage");
 		let num = 1;
 		win.x = x;
 		win.y = 0;
-		
+
 		// Loop up to GRID_HEIGHT (inclusive) to process matches at the grid's bottommost edge.
 		for (let y = 1; y <= GRID_HEIGHT; y++) {
 			// Clean boundary checks: do not query jQuery for non-existent DOM element `#x_7`.
 			const testimg = (y < GRID_HEIGHT) ? $(`#${x}_${y}`).css("backgroundImage") : null;
-			
+
 			if (img && testimg && img === testimg) {
 				num++;
 			} else {
@@ -564,7 +564,7 @@ function testGrid(init = false) {
 			img = testimg;
 		}
 	}
-	
+
 	if (init) {
 		fillGrid(init);
 	} else {
@@ -639,7 +639,11 @@ function play(x, y) {
 				p1.css({ left: left1, top: top1, "z-index": "" });
 				p2.css({ left: left2, top: top2, "z-index": "" });
 
-				if (!testGrid()) {
+				if (testGrid()) {
+					game.movesLeft--;
+					$("#movesLeft").text(game.movesLeft);
+					if (game.movesLeft < 1) { gameOver(); }
+				} else {
 					// Swap failed: slide back
 					p1.css("z-index", 15);
 					p2.css("z-index", 15);
@@ -653,10 +657,6 @@ function play(x, y) {
 						p1.css({ left: left1, top: top1, "z-index": "" });
 						p2.css({ left: left2, top: top2, "z-index": "" });
 					});
-				} else {
-					game.movesLeft--;
-					$("#movesLeft").text(game.movesLeft);
-					if (game.movesLeft < 1) gameOver();
 				}
 			});
 		} else {
@@ -694,7 +694,7 @@ $(function () {
 
 	// Trigger initial responsive layout sizing
 	resizeGame();
-	
+
 	let resizeTimeout;
 	$(window).on("resize", function () {
 		resizeGame();
