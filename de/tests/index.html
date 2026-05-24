@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Test Suite - Jeu de Dés</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background: radial-gradient(circle at center, #242428 0%, #111113 100%);
+			color: #e0e0e0;
+			font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			min-height: 100vh;
+			box-sizing: border-box;
+		}
+
+		.container {
+			max-width: 900px;
+			margin: 40px auto;
+			padding: 0 20px;
+		}
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+			padding-bottom: 20px;
+			margin-bottom: 30px;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 2.2em;
+			font-weight: 700;
+			background: linear-gradient(135deg, #1b85b8 0%, #ae5a41 100%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+
+		.run-btn {
+			padding: 12px 24px;
+			font-size: 1.1em;
+			background: #1b85b8;
+			color: white;
+			border: none;
+			border-radius: 8px;
+			font-weight: bold;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			box-shadow: 0 4px 15px rgba(27, 133, 184, 0.4);
+		}
+
+		.run-btn:hover {
+			background: #ae5a41;
+			box-shadow: 0 4px 15px rgba(174, 90, 65, 0.4);
+			transform: translateY(-2px);
+		}
+
+		.summary-bar {
+			background: rgba(255, 255, 255, 0.03);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			border-radius: 12px;
+			padding: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 30px;
+		}
+
+		.summary-stat {
+			font-size: 1.2em;
+			font-weight: 600;
+		}
+
+		.summary-stat span {
+			font-size: 1.5em;
+			font-weight: 800;
+		}
+
+		.status-pass { color: #4caf50; }
+		.status-fail { color: #f44336; }
+
+		.progress-container {
+			flex-grow: 1;
+			max-width: 400px;
+			height: 8px;
+			background: rgba(255, 255, 255, 0.05);
+			border-radius: 4px;
+			margin: 0 25px;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.progress-bar {
+			height: 100%;
+			width: 0%;
+			background: #4caf50;
+			border-radius: 4px;
+			transition: width 0.3s ease;
+		}
+
+		.progress-bar.fail {
+			background: #f44336;
+		}
+
+		.test-suite {
+			background: rgba(255, 255, 255, 0.02);
+			border: 1px solid rgba(255, 255, 255, 0.06);
+			border-radius: 16px;
+			overflow: hidden;
+			margin-bottom: 25px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+		}
+
+		.suite-header {
+			background: rgba(255, 255, 255, 0.03);
+			padding: 15px 20px;
+			font-size: 1.1em;
+			font-weight: 700;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.test-item {
+			padding: 15px 20px;
+			border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			transition: background 0.15s ease;
+		}
+
+		.test-item:hover {
+			background: rgba(255, 255, 255, 0.01);
+		}
+
+		.test-item:last-child {
+			border-bottom: none;
+		}
+
+		.test-details {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.test-name {
+			font-weight: 600;
+			font-size: 1.05em;
+		}
+
+		.test-desc {
+			font-size: 0.85em;
+			color: #b0b0b5;
+		}
+
+		.test-result-badge {
+			padding: 6px 12px;
+			border-radius: 20px;
+			font-size: 0.85em;
+			font-weight: 700;
+			text-transform: uppercase;
+			min-width: 60px;
+			text-align: center;
+		}
+
+		.badge-pending {
+			background: rgba(255, 255, 255, 0.08);
+			color: #aaa;
+		}
+
+		.badge-pass {
+			background: rgba(76, 175, 80, 0.15);
+			color: #4caf50;
+			border: 1px solid rgba(76, 175, 80, 0.3);
+		}
+
+		.badge-fail {
+			background: rgba(244, 67, 54, 0.15);
+			color: #f44336;
+			border: 1px solid rgba(244, 67, 54, 0.3);
+		}
+
+		.back-link {
+			display: inline-flex;
+			align-items: center;
+			color: #1b85b8;
+			text-decoration: none;
+			font-weight: bold;
+			margin-bottom: 15px;
+			transition: color 0.15s ease;
+		}
+
+		.back-link:hover {
+			color: #ae5a41;
+		}
+
+		/* Hidden Game Stubs for de.js initialization compatibility */
+		#stubs_container {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<!-- Hidden game layout stubs so de.js can execute fully in memory without crashing -->
+	<div id="stubs_container">
+		<div id="game_scaler">
+			<section id="game_layout">
+				<div id="play_container">
+					<div id="menu">
+						<div id="info"></div>
+						<div id="form_highscore">
+							<input type="text" id="de_pseudo" value="Anonymous" />
+						</div>
+						<div id="ty_partage"></div>
+					</div>
+					<div id="win_area">
+						<div id="win0"></div>
+						<div id="win1"></div>
+						<div id="win2"></div>
+						<div id="win3"></div>
+						<div id="win4"></div>
+						<div id="win5"></div>
+						<div id="win6"></div>
+					</div>
+					<div id="de_area"></div>
+				</div>
+				<div id="goal_area">
+					<div id="brelan1"><div></div></div>
+					<div id="brelan2"><div></div></div>
+					<div id="brelan3"><div></div></div>
+					<div id="brelan4"><div></div></div>
+					<div id="brelan5"><div></div></div>
+					<div id="brelan6"><div></div></div>
+					<div id="doublePaire"><div class="dp1"></div><div class="dp2"></div></div>
+					<div id="full"><div class="full2"></div><div class="full3"></div></div>
+					<div id="carre"><div></div></div>
+					<div id="yahtzee"><div></div></div>
+				</div>
+			</section>
+		</div>
+		<span id="score">0</span>
+		<span id="movesLeft">60</span>
+	</div>
+
+	<div class="container">
+		<a href="../index.html" class="back-link">← Retour au Jeu</a>
+		<header>
+			<div>
+				<h1>Tests de Validation du Jeu</h1>
+				<p style="margin: 5px 0 0 0; color: #aaa;">Validation automatisée des mécanismes de jeu en mémoire</p>
+			</div>
+			<button id="run_btn" class="run-btn" onclick="runAllTests();">Lancer les Tests</button>
+		</header>
+
+		<div class="summary-bar">
+			<div class="summary-stat">
+				Statut: <span id="summary_status" class="status-pass">Prêt</span>
+			</div>
+			<div class="progress-container">
+				<div id="progress_bar" class="progress-bar"></div>
+			</div>
+			<div id="summary_count" class="summary-stat">
+				Tests: <span>0 / 0</span>
+			</div>
+		</div>
+
+		<div class="test-suite">
+			<div class="suite-header">
+				<span>Validation d'Initialisation & Utilitaires</span>
+				<span id="suite_1_time" style="font-size: 0.85em; color: #888;"></span>
+			</div>
+			<div class="test-item" id="test_init">
+				<div class="test-details">
+					<span class="test-name">Initialisation du Jeu</span>
+					<span class="test-desc">Valide que initGame() remet le score, les coups restants et les objectifs à zéro.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_init">Attente</div>
+			</div>
+			<div class="test-item" id="test_swapping">
+				<div class="test-details">
+					<span class="test-name">Validation de Permutation</span>
+					<span class="test-desc">Valide que canBeSwitched() autorise uniquement les déplacements adjacents (haut, bas, gauche, droite).</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_swapping">Attente</div>
+			</div>
+		</div>
+
+		<div class="test-suite">
+			<div class="suite-header">
+				<span>Validation des Objectifs (Combinaisons de la Main)</span>
+				<span id="suite_2_time" style="font-size: 0.85em; color: #888;"></span>
+			</div>
+			<div class="test-item" id="test_goal_brelan">
+				<div class="test-details">
+					<span class="test-name">Objectif: Brelan</span>
+					<span class="test-desc">Valide qu'un Brelan (3 dés identiques) est détecté dans la main et retiré.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_goal_brelan">Attente</div>
+			</div>
+			<div class="test-item" id="test_goal_double_paire">
+				<div class="test-details">
+					<span class="test-name">Objectif: Double Paire</span>
+					<span class="test-desc">Valide qu'une Double Paire (deux paires distinctes) est détectée et retirée.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_goal_double_paire">Attente</div>
+			</div>
+			<div class="test-item" id="test_goal_full">
+				<div class="test-details">
+					<span class="test-name">Objectif: Full House</span>
+					<span class="test-desc">Valide qu'un Full (un brelan et une paire) est détecté et retiré.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_goal_full">Attente</div>
+			</div>
+			<div class="test-item" id="test_goal_carre">
+				<div class="test-details">
+					<span class="test-name">Objectif: Carré (Square)</span>
+					<span class="test-desc">Valide qu'un Carré (4 dés identiques) est détecté et retiré.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_goal_carre">Attente</div>
+			</div>
+			<div class="test-item" id="test_goal_yahtzee">
+				<div class="test-details">
+					<span class="test-name">Objectif: Yahtzee</span>
+					<span class="test-desc">Valide qu'un Yahtzee (5 dés identiques) est détecté et retiré.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_goal_yahtzee">Attente</div>
+			</div>
+		</div>
+
+		<div class="test-suite">
+			<div class="suite-header">
+				<span>Validation du Moteur d'Alignement (Grille)</span>
+				<span id="suite_3_time" style="font-size: 0.85em; color: #888;"></span>
+			</div>
+			<div class="test-item" id="test_grid_horizontal">
+				<div class="test-details">
+					<span class="test-name">Alignement Horizontal</span>
+					<span class="test-desc">Valide la détection, la prise en charge et le vidage d'une ligne horizontale de 3 dés identiques.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_grid_horizontal">Attente</div>
+			</div>
+			<div class="test-item" id="test_grid_vertical">
+				<div class="test-details">
+					<span class="test-name">Alignement Vertical</span>
+					<span class="test-desc">Valide la détection, la prise en charge et le vidage d'une colonne verticale de 3 dés identiques.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_grid_vertical">Attente</div>
+			</div>
+			<div class="test-item" id="test_grid_lshape">
+				<div class="test-details">
+					<span class="test-name">Alignement en L (Double Alignement)</span>
+					<span class="test-desc">Valide qu'une forme en L (3 dés horizontaux et 3 dés verticaux partageant un coin) ajoute exactement 2 dés de cette valeur à la main.</span>
+				</div>
+				<div class="test-result-badge badge-pending" id="badge_test_grid_lshape">Attente</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Core Game File (de.js holds pure separated memory state logic) -->
+	<script src="../de.js"></script>
+	<!-- Automated Test Execution Code -->
+	<script src="tests.js"></script>
+</body>
+</html>

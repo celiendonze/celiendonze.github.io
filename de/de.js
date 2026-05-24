@@ -223,7 +223,7 @@ function gameOver() {
 	if (tyPartage) tyPartage.style.display = "none";
 }
 
-function newGame() {
+async function newGame() {
 	initGame();
 	
 	// Randomize starting board
@@ -235,7 +235,7 @@ function newGame() {
 	renderGrid();
 
 	// Clear startup combos and refill
-	testGrid(true);
+	await testGrid(true);
 
 	// Wipe scoring & win hand clean for fresh game start
 	initGame();
@@ -265,7 +265,7 @@ function addWinHand(numDe) {
 	}
 }
 
-function takeOffWinHand(de, num) {
+function takeOffWinHand(de, num, init = false) {
 	let cmpt = num;
 	const randNum = Math.floor(Math.random() * 6);
 	for (let i = gameState.winHand.length - 1; i >= 0; i--) {
@@ -279,7 +279,7 @@ function takeOffWinHand(de, num) {
 	if (num === 3) gameState.score += 1000;
 	if (num === 4) gameState.score += 2000;
 	if (num === 5) gameState.score += 5000;
-	AudioManager.playSFX(AudioManager.audioCoins[randNum]);
+	if (!init) AudioManager.playSFX(AudioManager.audioCoins[randNum]);
 }
 
 function animateWinHandToGoal(indices, targetSelector, deValue) {
@@ -362,7 +362,7 @@ function animateWinHandToGoal(indices, targetSelector, deValue) {
 	});
 }
 
-function testWinHand() {
+function testWinHand(init = false) {
 	const counts = Array(6).fill(0);
 	gameState.winHand.forEach(num => { if (num) counts[num - 1]++; });
 
@@ -376,8 +376,8 @@ function testWinHand() {
 				gameState.winHand.forEach((val, idx) => {
 					if (val === i + 1 && indices.length < 5) indices.push(idx);
 				});
-				animateWinHandToGoal(indices, "#yahtzee div", i + 1);
-				takeOffWinHand(i + 1, 5);
+				if (!init) animateWinHandToGoal(indices, "#yahtzee div", i + 1);
+				takeOffWinHand(i + 1, 5, init);
 			}
 		});
 	}
@@ -391,8 +391,8 @@ function testWinHand() {
 				gameState.winHand.forEach((val, idx) => {
 					if (val === i + 1 && indices.length < 4) indices.push(idx);
 				});
-				animateWinHandToGoal(indices, "#carre div", i + 1);
-				takeOffWinHand(i + 1, 4);
+				if (!init) animateWinHandToGoal(indices, "#carre div", i + 1);
+				takeOffWinHand(i + 1, 4, init);
 			}
 		});
 	}
@@ -413,11 +413,13 @@ function testWinHand() {
 							else if (val === j + 1 && indices2.length < 2) indices2.push(idx);
 						});
 
-						animateWinHandToGoal(indices3, ".full3", i + 1);
-						animateWinHandToGoal(indices2, ".full2", j + 1);
+						if (!init) {
+							animateWinHandToGoal(indices3, ".full3", i + 1);
+							animateWinHandToGoal(indices2, ".full2", j + 1);
+						}
 
-						takeOffWinHand(i + 1, 3);
-						takeOffWinHand(j + 1, 2);
+						takeOffWinHand(i + 1, 3, init);
+						takeOffWinHand(j + 1, 2, init);
 						break;
 					}
 				}
@@ -442,11 +444,13 @@ function testWinHand() {
 							else if (val === j + 1 && indices2.length < 2) indices2.push(idx);
 						});
 
-						animateWinHandToGoal(indices1, ".dp1", i + 1);
-						animateWinHandToGoal(indices2, ".dp2", j + 1);
+						if (!init) {
+							animateWinHandToGoal(indices1, ".dp1", i + 1);
+							animateWinHandToGoal(indices2, ".dp2", j + 1);
+						}
 
-						takeOffWinHand(i + 1, 2);
-						takeOffWinHand(j + 1, 2);
+						takeOffWinHand(i + 1, 2, init);
+						takeOffWinHand(j + 1, 2, init);
 						break;
 					}
 				}
@@ -462,8 +466,8 @@ function testWinHand() {
 			gameState.winHand.forEach((val, idx) => {
 				if (val === i + 1 && indices.length < 3) indices.push(idx);
 			});
-			animateWinHandToGoal(indices, `#brelan${i + 1} div`, i + 1);
-			takeOffWinHand(i + 1, 3);
+			if (!init) animateWinHandToGoal(indices, `#brelan${i + 1} div`, i + 1);
+			takeOffWinHand(i + 1, 3, init);
 		}
 	});
 
@@ -481,6 +485,10 @@ function thereIsHoles() {
 }
 
 function fillGrid(init = false) {
+	// Stop refilling if the game is already over
+	if (!init && (gameState.movesLeft < 1 || testWin())) {
+		return;
+	}
 	let shifted = false;
 	while (thereIsHoles()) {
 		for (let x = 0; x < GAME_CONFIG.gridWidth; x++) {
@@ -520,10 +528,127 @@ function takeOffState(positionX, positionY, number, direction) {
 	renderGrid();
 }
 
-function testGrid(init = false) {
+// Aligned Match Fly-Up Helpers
+function getNextWinHandIndex() {
+	const tempHand = [...gameState.winHand];
+	if (tempHand[tempHand.length - 1] !== 0) {
+		tempHand.shift();
+		tempHand.push(0);
+	}
+	for (let i = 0; i < tempHand.length; i++) {
+		if (tempHand[i] === 0) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+function animateGridToWinHand(positionX, positionY, number, direction, dieVal, targetIdx) {
+	return new Promise((resolve) => {
+		const targetEl = document.getElementById(`win${targetIdx}`);
+		if (!targetEl) {
+			resolve();
+			return;
+		}
+
+		const scale = getGameScale();
+		const endRect = targetEl.getBoundingClientRect();
+		const endOffset = {
+			left: endRect.left + window.scrollX,
+			top: endRect.top + window.scrollY
+		};
+		const targetWidth = targetEl.offsetWidth;
+		const targetHeight = targetEl.offsetHeight;
+
+		let completedCount = 0;
+		const totalDice = number;
+
+		for (let i = 0; i < number; i++) {
+			const cx = (direction === "hor") ? positionX + i : positionX;
+			const cy = (direction === "hor") ? positionY : positionY + i;
+
+			const sourceEl = document.getElementById(`${cx}_${cy}`);
+			if (!sourceEl) {
+				completedCount++;
+				if (completedCount === totalDice) resolve();
+				continue;
+			}
+
+			const startRect = sourceEl.getBoundingClientRect();
+			const startOffset = {
+				left: startRect.left + window.scrollX,
+				top: startRect.top + window.scrollY
+			};
+			const sourceWidth = sourceEl.offsetWidth;
+			const sourceHeight = sourceEl.offsetHeight;
+
+			// Hide original cell background
+			sourceEl.style.backgroundImage = "none";
+
+			// Create duplicate flying element
+			const flying = document.createElement("div");
+			flying.className = "flying-die-match";
+			Object.assign(flying.style, {
+				position: "absolute",
+				left: `${startOffset.left}px`,
+				top: `${startOffset.top}px`,
+				width: `${sourceWidth * scale}px`,
+				height: `${sourceHeight * scale}px`,
+				backgroundImage: `url(${GAME_CONFIG.paths.diceImage(dieVal)})`,
+				backgroundSize: "cover",
+				backgroundRepeat: "no-repeat",
+				backgroundPosition: "center",
+				borderRadius: `${10 * scale}px`,
+				border: `${2 * scale}px solid black`,
+				boxShadow: `0 ${4 * scale}px ${15 * scale}px rgba(0, 0, 0, 0.6)`,
+				zIndex: "1000",
+				opacity: "1"
+			});
+			document.body.appendChild(flying);
+
+			const anim = flying.animate([
+				{
+					left: `${startOffset.left}px`,
+					top: `${startOffset.top}px`,
+					width: `${sourceWidth * scale}px`,
+					height: `${sourceHeight * scale}px`,
+					transform: 'rotate(0deg)',
+					opacity: 1
+				},
+				{
+					left: `${endOffset.left}px`,
+					top: `${endOffset.top}px`,
+					width: `${targetWidth * scale}px`,
+					height: `${targetHeight * scale}px`,
+					transform: 'rotate(360deg)',
+					opacity: 0.8
+				}
+			], {
+				duration: 500,
+				easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+			});
+
+			anim.onfinish = () => {
+				flying.remove();
+				completedCount++;
+				if (completedCount === totalDice) {
+					resolve();
+				}
+			};
+		}
+	});
+}
+
+async function testGrid(init = false) {
+	// Stop any match checking or cascades if we have no moves left or already won
+	if (!init && (gameState.movesLeft < 1 || testWin())) {
+		return false;
+	}
+
 	let bool = false;
 
 	// Horizontal match detection
+	const horMatches = [];
 	for (let y = 0; y < GAME_CONFIG.gridHeight; y++) {
 		let currentVal = gameState.grid[0][y];
 		let num = 1;
@@ -536,8 +661,7 @@ function testGrid(init = false) {
 				num++;
 			} else {
 				if (num >= 3) {
-					takeOffState(startX, y, num, "hor");
-					if (!init) AudioManager.playSFX(AudioManager.audioDice);
+					horMatches.push({ startX, y, num, val: currentVal });
 					bool = true;
 				}
 				startX = x;
@@ -548,6 +672,7 @@ function testGrid(init = false) {
 	}
 
 	// Vertical match detection
+	const verMatches = [];
 	for (let x = 0; x < GAME_CONFIG.gridWidth; x++) {
 		let currentVal = gameState.grid[x][0];
 		let num = 1;
@@ -560,8 +685,7 @@ function testGrid(init = false) {
 				num++;
 			} else {
 				if (num >= 3) {
-					takeOffState(x, startY, num, "ver");
-					if (!init) AudioManager.playSFX(AudioManager.audioDice);
+					verMatches.push({ x, startY, num, val: currentVal });
 					bool = true;
 				}
 				startY = y;
@@ -571,13 +695,80 @@ function testGrid(init = false) {
 		}
 	}
 
-	if (init) {
-		fillGrid(init);
+	if (bool) {
+		if (init) {
+			// Clear synchronously without animations during setup
+			horMatches.forEach(m => takeOffState(m.startX, m.y, m.num, "hor"));
+			verMatches.forEach(m => takeOffState(m.x, m.startY, m.num, "ver"));
+			fillGrid(init);
+			renderWinHand();
+			testWinHand(init);
+		} else {
+			AudioManager.playSFX(AudioManager.audioDice);
+
+			const animations = [];
+			let currentSimulatedHand = [...gameState.winHand];
+
+			function getSimulatedWinHandIndex() {
+				if (currentSimulatedHand[currentSimulatedHand.length - 1] !== 0) {
+					currentSimulatedHand.shift();
+					currentSimulatedHand.push(0);
+				}
+				for (let i = 0; i < currentSimulatedHand.length; i++) {
+					if (currentSimulatedHand[i] === 0) {
+						return i;
+					}
+				}
+				return 0;
+			}
+
+			horMatches.forEach(m => {
+				const targetIdx = getSimulatedWinHandIndex();
+				currentSimulatedHand[targetIdx] = m.val;
+
+				for (let i = 0; i < m.num; i++) {
+					gameState.grid[m.startX + i][m.y] = 0;
+				}
+
+				animations.push(animateGridToWinHand(m.startX, m.y, m.num, "hor", m.val, targetIdx));
+				addWinHand(m.val);
+			});
+
+			verMatches.forEach(m => {
+				const targetIdx = getSimulatedWinHandIndex();
+				currentSimulatedHand[targetIdx] = m.val;
+
+				for (let i = 0; i < m.num; i++) {
+					gameState.grid[m.x][m.startY + i] = 0;
+				}
+
+				animations.push(animateGridToWinHand(m.x, m.startY, m.num, "ver", m.val, targetIdx));
+				addWinHand(m.val);
+			});
+
+			renderGrid();
+
+			// Wait for all fly-up animations to complete
+			await Promise.all(animations);
+
+			renderWinHand();
+			testWinHand(init);
+
+			// Refill the grid
+			setTimeout(() => fillGrid(false), 500);
+		}
 	} else {
-		setTimeout(() => fillGrid(init), 500);
+		if (init) {
+			fillGrid(init);
+		} else {
+			if (thereIsHoles()) {
+				setTimeout(() => fillGrid(false), 500);
+			}
+		}
+		renderWinHand();
+		testWinHand(init);
 	}
-	renderWinHand();
-	testWinHand();
+
 	return bool;
 }
 
@@ -653,7 +844,7 @@ async function play(x, y) {
 			p1.style.zIndex = "";
 			p2.style.zIndex = "";
 
-			if (testGrid()) {
+			if (await testGrid()) {
 				gameState.movesLeft--;
 				document.getElementById("movesLeft").textContent = gameState.movesLeft;
 				if (gameState.movesLeft < 1) {
