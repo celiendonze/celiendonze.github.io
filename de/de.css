@@ -1,3 +1,15 @@
+:root {
+	--cell-size: 80px;
+	--grid-width: 10;
+	--grid-height: 7;
+	--primary-color: #1b85b8;
+	--primary-rgb: 27, 133, 184;
+	--hover-color: #ae5a41;
+	--win-area-height: 90px;
+	--goal-area-width: 360px;
+	--goal-area-height: 610px;
+}
+
 html, body {
 	margin: 0;
 	padding: 0;
@@ -94,7 +106,7 @@ html, body {
 	width: 240px;
 	height: 70px;
 	font-size: 26px;
-	background: #1b85b8;
+	background: var(--primary-color);
 	border-radius: 10px;
 	color: white;
 	border: none;
@@ -103,7 +115,7 @@ html, body {
 }
 
 #menu > button:hover {
-	background: #ae5a41;
+	background: var(--hover-color);
 	cursor: pointer;
 }
 
@@ -182,13 +194,13 @@ html, body {
 }
 
 .goal_done {
-	background-color: rgba(27, 133, 184, 0.2);
-	box-shadow: 0 0 12px rgba(27, 133, 184, 0.4);
+	background-color: rgba(var(--primary-rgb), 0.2);
+	box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.4);
 }
 
 .goal_done::after {
 	content: "✓";
-	color: #1b85b8;
+	color: var(--primary-color);
 	font-size: 2em;
 	font-weight: bold;
 	display: inline-block;
@@ -251,7 +263,7 @@ html, body {
 	padding: 10px 15px;
 	font-size: 18px;
 	border-radius: 5px;
-	background: #1b85b8;
+	background: var(--primary-color);
 	color: white;
 	border: none;
 	cursor: pointer;
@@ -261,7 +273,7 @@ html, body {
 
 #form_highscore > button:hover {
 	cursor: pointer;
-	background: #ae5a41;
+	background: var(--hover-color);
 }
 
 #brelan1 div { background-image: url(img/d_1.png); }
