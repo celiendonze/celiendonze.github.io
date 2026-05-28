@@ -14,13 +14,13 @@ Preview any project by opening `index.html` in a browser. For local serving: `py
 | `rain/` | Rain simulation (Plotly analytics) |
 | `JST_/` | Linux terminal emulation |
 | `fourmi/` | Langton's Ant cellular automaton |
-| `nn/` | MNIST digit recognition (TensorFlow.js) — disabled in root index.html |
+| `tfjs_mnist/` | MNIST digit recognition (TensorFlow.js) |
 | `webgl/` | WebGL experiments (heart, labo1, labo2 with sun shader) |
 | `coralie/` | Image toggle (gift box) |
 | `karaoke_queue/` | Karaoke queue app — handled by a separate repo |
 
 ## Notable details
 - `rain/`, `de/`, `coralie/` have their own `AGENTS.md` with project-specific info
-- `nn/` loads TensorFlow.js models from `models/`; its root entry is commented out
+- `tfjs_mnist/` loads TensorFlow.js models from `models/`
 - `water_ripples/.htaccess` enables CORS for local dev
 - `snake/` has a PHP backend (`snake.php` + `scores.xml`) for highscores

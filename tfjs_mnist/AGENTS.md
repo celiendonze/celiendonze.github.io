@@ -1,4 +1,4 @@
-# AGENTS.md - MNIST Digit Recognizer (nn)
+# AGENTS.md - MNIST Digit Recognizer (tfjs_mnist)
 
 This directory contains a web application designed for hand-drawn digit recognition using machine learning running entirely client-side.
 
@@ -19,12 +19,12 @@ The **Digits Recognizer** is an interactive, browser-based app allowing users to
 
 | File | Role | Status |
 | :--- | :--- | :--- |
-| [`index.html`](file:///e:/dev/celiendonze.github.io/nn/index.html) | The web interface layout. Integrates libraries and lists interactive zones (canvas, model stats, model selector, probability chart). | **Working** |
-| [`style.css`](file:///e:/dev/celiendonze.github.io/nn/style.css) | Custom styling for the layout, margins, buttons, and visual sections. | **Working** |
-| [`script.js`](file:///e:/dev/celiendonze.github.io/nn/script.js) | Core orchestration script: listens to drawing events, reshapes image matrices, manages model inference, and renders the probability charts. | **Working** *(with robust error-handling)* |
-| [`models.js`](file:///e:/dev/celiendonze.github.io/nn/models.js) | Houses the list of the 2 available neural network models and defines tensor preprocessing functions: `shapeTo1D`, `shapeTo1DTranspose`, and `shapeTo2D`. | **Working** |
-| [`utils.js`](file:///e:/dev/celiendonze.github.io/nn/utils.js) | General helper routines (e.g. `argMax`). | **Working** |
-| [`ModelButton.js`](file:///e:/dev/celiendonze.github.io/nn/ModelButton.js) | Drafted ES6 class representing an experimental button-handling model interface. | **Unused / Incomplete** |
+| [`index.html`](file:///e:/dev/celiendonze.github.io/tfjs_mnist/index.html) | The web interface layout. Integrates libraries and lists interactive zones (canvas, model stats, model selector, probability chart). | **Working** |
+| [`style.css`](file:///e:/dev/celiendonze.github.io/tfjs_mnist/style.css) | Custom styling for the layout, margins, buttons, and visual sections. | **Working** |
+| [`script.js`](file:///e:/dev/celiendonze.github.io/tfjs_mnist/script.js) | Core orchestration script: listens to drawing events, reshapes image matrices, manages model inference, and renders the probability charts. | **Working** *(with robust error-handling)* |
+| [`models.js`](file:///e:/dev/celiendonze.github.io/tfjs_mnist/models.js) | Houses the list of the 2 available neural network models and defines tensor preprocessing functions: `shapeTo1D`, `shapeTo1DTranspose`, and `shapeTo2D`. | **Working** |
+| [`utils.js`](file:///e:/dev/celiendonze.github.io/tfjs_mnist/utils.js) | General helper routines (e.g. `argMax`). | **Working** |
+| [`ModelButton.js`](file:///e:/dev/celiendonze.github.io/tfjs_mnist/ModelButton.js) | Drafted ES6 class representing an experimental button-handling model interface. | **Unused / Incomplete** |
 | `models/` | Holds JSON definitions and `.bin` weight files for both active models. | **Working** |
 
 ---
@@ -75,8 +75,8 @@ The application dynamically loads and switches between 2 retrained models in the
    - There is a `ModelButton.js` script in the folder, but it is not imported in `index.html` and its functionality is handled differently by `script.js`.
 2. **No Touch Screen Support**:
    - Interaction is bound strictly to `onmousedown`, `onmouseup`, and `onmousemove`. There are no touch event bindings (`touchstart`, `touchmove`, `touchend`), meaning users cannot draw or interact with the app on mobile or tablet touch screens.
-3. **Disabled in Root Index**:
-   - The entry link to this subfolder (`nn/`) is currently commented out/disabled in the main `index.html` at the repository's root.
+3. **Enabled in Root Index**:
+    - The entry link to this subfolder (`tfjs_mnist/`) is now enabled in the main `index.html` at the repository's root.
 
 ---
 
@@ -86,7 +86,7 @@ If the models are not loading and the UI is either stuck or displaying a red err
 
 ### 1. Direct File Protocol (`file://`) Block (Most Common)
 - **Problem**: Opening `index.html` directly by double-clicking it sets the browser to the `file:///` protocol. Modern browser security policies (Same-Origin Policy / CORS) block `fetch()` requests on local files. Since TensorFlow.js (`tf.loadLayersModel()`) uses standard browser fetch APIs to stream `model.json` and its weight shards, this action is blocked, causing model load failures.
-- **Solution**: Always serve the project through an HTTP server (e.g. running `python -m http.server 8000` in the repository root or using VS Code's Live Server) and access it via `http://localhost:8000/nn/`.
+- **Solution**: Always serve the project through an HTTP server (e.g. running `python -m http.server 8000` in the repository root or using VS Code's Live Server) and access it via `http://localhost:8000/tfjs_mnist/`.
 
 ### 2. Keras 3 Compatibility (Resolved!)
 - **Problem**: Both models were exported using **Keras 3.14.1**, which serializes variable types into complex `DTypePolicy` objects, nested weight initializer classes, and `batch_shape` instead of Keras 2 style formats.
@@ -94,7 +94,7 @@ If the models are not loading and the UI is either stuck or displaying a red err
 - Both models are now **100% compatible, healthy (0 NaNs), and active**!
 
 ### 3. Robust Code Solution Implemented
-- **What We Did**: We updated `loadModel()` in [`script.js`](file:///e:/dev/celiendonze.github.io/nn/script.js) with a robust `try-catch` wrapper. Instead of silently failing and hanging the UI on `loading...`, the application now intercepts load failures, outputs the error to the browser developer console, and notifies the user directly on screen in red text.
+- **What We Did**: We updated `loadModel()` in [`script.js`](file:///e:/dev/celiendonze.github.io/tfjs_mnist/script.js) with a robust `try-catch` wrapper. Instead of silently failing and hanging the UI on `loading...`, the application now intercepts load failures, outputs the error to the browser developer console, and notifies the user directly on screen in red text.
 
 ---
 
@@ -105,5 +105,5 @@ python -m http.server 8000
 ```
 Then navigate your browser to:
 ```
-http://localhost:8000/nn/
+http://localhost:8000/tfjs_mnist/
 ```
