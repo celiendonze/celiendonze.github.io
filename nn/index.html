@@ -27,34 +27,36 @@
 			<h4>Hes d'été 2018 - Biloni Kim, Donzé Célien, Vorpe Fabien</h2>
 		</section>
 
-		<section class="up">
-			<div class="canvas">
-				<canvas id="canvas" height="280" width="280" oncontextmenu="return false;"
-					onmousemove="readDrawing(event);" onmousedown="mousePressed(event);"
-					onmouseup="mouseReleased(event)"></canvas>
-				<button onclick="reset();">reset</button>
-			</div>
+		<div class="dashboard">
+			<section class="up">
+				<div class="canvas">
+					<canvas id="canvas" height="280" width="280" oncontextmenu="return false;"
+						onmousemove="readDrawing(event);" onmousedown="mousePressed(event);"
+						onmouseup="mouseReleased(event)"></canvas>
+					<button onclick="reset();">reset</button>
+				</div>
 
-			<div class="ModelInfo">
-				<p id="loadingState" style="display: inline;">loading...</p>
-				<h3>Model name: <span id="modelName"></span></h3>
-				<p>Model's prediction : <span id="predictedClass"></span></p>
-				<p>Model's confidence : <span id="confidence"></span></p>
-			</div>
+				<div class="ModelInfo">
+					<p id="loadingState" style="display: inline;">loading...</p>
+					<h3>Model name: <span id="modelName"></span></h3>
+					<p>Model's prediction : <span id="predictedClass"></span></p>
+					<p>Model's confidence : <span id="confidence"></span></p>
+				</div>
 
-			<div class="section" id="neuralNetworksButtons">
-				<p>Models available:</p>
-			</div>
-		</section>
+				<div class="section" id="neuralNetworksButtons">
+					<p>Models available:</p>
+				</div>
+			</section>
 
-		<section class="down">
-			<canvas id="chart" height="200" width="720"></canvas>
-		</section>
+			<section class="down">
+				<canvas id="chart" height="200" width="720"></canvas>
+			</section>
+		</div>
 
 	</div>
-	<script src="utils.js" type="text/javascript"> </script>
-	<script src="models.js" type="text/javascript"></script>
-	<script src="script.js" type="text/javascript"> </script>
+	<script src="utils.js?v=3" type="text/javascript"> </script>
+	<script src="models.js?v=3" type="text/javascript"></script>
+	<script src="script.js?v=3" type="text/javascript"> </script>
 </body>
 
 </html>

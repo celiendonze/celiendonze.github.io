@@ -31,59 +31,15 @@ function shapeTo2D(data) {
 
 const models = [
     {
-        name: "Digits DNN 2025",
-        path: "./models/digitsDNN_2025/model.json",
-        inputFunction: shapeTo1DTranspose,
-        classes: ["0","1","2","3","4","5","6","7","8","9"]
-    },
-    {
-        name: "Digits DNN",
-        path: "./models/digitsDNN/model.json",
-        inputFunction: shapeTo1DTranspose,
-        classes: ["0","1","2","3","4","5","6","7","8","9"]
-    },
-    {
-        name: "Digits CNN",
-        path: "./models/digitsCNN/model.json",
+        name: "MNIST DNN",
+        path: "./models/MNIST_DNN_tfjs/model.json?v=3",
         inputFunction: shapeTo2D,
         classes: ["0","1","2","3","4","5","6","7","8","9"]
     },
     {
-        name: "Letters DNN",
-        path: "./models/lettersDNN/model.json",
-        inputFunction: shapeTo1D,
-        classes: [
-            "A","B","C","D","E","F","G","H","I","J","K","L","M",
-            "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
-        ]
-    },
-    {
-        name: "Letters CNN",
-        path: "./models/lettersCNN/model.json",
+        name: "MNIST CNN",
+        path: "./models/MNIST_CNN_tfjs/model.json?v=3",
         inputFunction: shapeTo2D,
-        classes: [
-            "A","B","C","D","E","F","G","H","I","J","K","L","M",
-            "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
-        ]
-    },
-    {
-        name: "Digits + Letters DNN",
-        path: "./models/digitslettersDNN/model.json",
-        inputFunction: shapeTo1D,
-        classes: [
-            "0","1","2","3","4","5","6","7","8","9",
-            "A","B","C","D","E","F","G","H","I","J","K","L","M",
-            "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
-        ]
-    },
-    {
-        name: "Digits + Letters CNN",
-        path: "./models/digitslettersCNN/model.json",
-        inputFunction: shapeTo2D,
-        classes: [
-            "0","1","2","3","4","5","6","7","8","9",
-            "A","B","C","D","E","F","G","H","I","J","K","L","M",
-            "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"
-        ]
+        classes: ["0","1","2","3","4","5","6","7","8","9"]
     }
 ];

@@ -1,16 +1,52 @@
 /*
 Author: Biloni Kim, Donzé Célien & Vorpe Fabien
-Description: main style sheet
+Description: main style sheet - updated to fit on a single screen
 */
+
+* {
+    box-sizing: border-box;
+}
 
 body {
     background-color: rgb(219, 240, 245);
     font-family: 'Trebuchet MS';
-    display: block;
+    margin: 0;
+    padding: 10px 20px;
+    height: 100vh;
+    overflow: hidden; /* Prevent body scrolling so it stays perfectly on one screen */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main {
+    width: 100%;
+    max-width: 1200px;
+    height: 95vh;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#title {
+    border: 3px solid rgba(5, 54, 56, 0.4);
+    padding: 10px;
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 h1 {
     color: rgb(5, 54, 56);
+    margin: 0;
+    font-size: 24px;
+}
+
+#title h4 {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    color: rgba(5, 54, 56, 0.8);
 }
 
 p {
@@ -19,38 +55,128 @@ p {
 
 button {
     user-select: none;
+    cursor: pointer;
 }
 
-.up > div {
-    display: inline-block;
-    vertical-align: middle;
-    padding: 0 20px;
+.dashboard {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex: 1;
+    min-height: 0; /* Let children shrink */
+    width: 100%;
 }
 
-.canvas > * {
-    display: block;
+section {
+    border: 3px solid rgba(5, 54, 56, 0.4);
+    padding: 15px;
+    margin: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.up {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    min-height: 0;
+}
+
+.down {
+    width: 55%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 0;
+}
+
+.canvas {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.canvas > canvas {
+    border: 3px solid rgba(5, 54, 56, 0.4);
+    background-color: white; /* Keep original white canvas background */
 }
 
 .canvas > button,
-#neuralNetworksButtons > button {
+#neuralNetworksButtons button {
     margin: auto;
     margin-top: 10px;
     padding: 5px 40px;
 }
 
-section {
-    border: 3px solid rgba(5, 54, 56, 0.4);
-    padding: 1%;
-    margin-bottom: 1%;
-    width: 80%;
-    margin-left: auto;
-    margin-right: auto;
+.ModelInfo {
+    width: 100%;
+    text-align: center;
 }
 
-#container {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid rgba(5, 54, 56, 0.4);
-    background-color: white;
+.ModelInfo h3 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    color: rgb(5, 54, 56);
+}
+
+.ModelInfo p {
+    margin: 3px 0;
+    font-size: 14px;
+    padding: 0;
+}
+
+#neuralNetworksButtons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+#neuralNetworksButtons p {
+    margin: 0;
+    font-weight: bold;
+    font-size: 14px;
+    color: rgb(5, 54, 56);
+}
+
+/* Make Chart container fill the .down section nicely */
+#chart {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100%;
+}
+
+.model-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 10px;
+    margin-top: 5px;
+    padding: 0 10px;
+}
+
+
+.indicator-container {
+    flex: 0 0 30%; /* Space for the indicator text */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.loaded-indicator {
+    font-size: 12px;
+    color: rgb(5, 54, 56);
+    font-weight: bold;
+    text-align: left;
+}
+
+.loaded-indicator.loading-text {
+    color: rgba(5, 54, 56, 0.6);
+    font-style: italic;
 }

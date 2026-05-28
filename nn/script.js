@@ -22,6 +22,7 @@ let modelID = 0;
 let drawing = false;
 let mouseButton = 0;
 let chartCtx;
+let myChart = null;
 
 $(document).ready(main);
 
@@ -53,16 +54,35 @@ function main() {
 }
 
 /**
+ * Renders the model selection buttons with active status indicators
+ */
+function updateButtonsUI(isLoading = false) {
+    const NNButtons = document.getElementById("neuralNetworksButtons");
+    NNButtons.innerHTML = "<p>Models available:</p>";
+    for (let i = 0; i < models.length; i++) {
+        const isCurrent = (i === modelID);
+        let indicator = "";
+        if (isCurrent) {
+            indicator = isLoading
+                ? "<span class='loaded-indicator loading-text'>✓ loading...</span>"
+                : "<span class='loaded-indicator'>✓ loaded</span>";
+        }
+        NNButtons.innerHTML += `
+            <div class="model-row">
+                <button onclick="loadModel(${i})">${models[i].name}</button>
+                <div class="indicator-container">${indicator}</div>
+            </div>
+        `;
+    }
+}
+
+/**
  * Creates the buttons for loading the models from the "models" list
  * Loads the first model in the list
  */
 function loadModels() {
-    const NNButtons = document.getElementById("neuralNetworksButtons");
-    NNButtons.innerHTML = "";
-    for (let i = 0; i < models.length; i++) {
-        NNButtons.innerHTML += `<button onclick="loadModel(${i})">${models[i].name}</button><br>`;
-    }
     modelID = 0;
+    updateButtonsUI(true); // Initial load with a "loading..." status
     loadModel(modelID);
 }
 
@@ -72,14 +92,28 @@ function loadModels() {
 async function loadModel(id) {
     modelID = id;
     document.getElementById("modelName").innerHTML = models[modelID].name;
-    document.getElementById('loadingState').style.display = "inline";
-    model = await tf.loadLayersModel(models[id].path);
-    console.log(`Model ${models[id].name} loaded successfully.`);
-    console.log("Model input shape:", model.inputs[0].shape);
-    console.log("Model output shape:", model.outputs[0].shape);
+    const loadingState = document.getElementById('loadingState');
+    loadingState.style.display = "inline";
+    loadingState.style.color = "black";
+    loadingState.innerHTML = "loading...";
 
-    predict(reset);
-    document.getElementById('loadingState').style.display = "none";
+    updateButtonsUI(true); // Display "loading..." indicator beside the selected model button
+
+    try {
+        model = await tf.loadLayersModel(models[id].path);
+        console.log(`Model ${models[id].name} loaded successfully.`);
+        console.log("Model input shape:", model.inputs[0].shape);
+        console.log("Model output shape:", model.outputs[0].shape);
+
+        predict(reset);
+        loadingState.style.display = "none";
+        updateButtonsUI(false); // Update to "loaded" status
+    } catch (error) {
+        console.error("Failed to load model:", error);
+        loadingState.style.color = "red";
+        loadingState.innerHTML = "Failed to load model! Ensure you are serving via HTTP (not opening file:// directly) and extensionless weight shards are served correctly.";
+        updateButtonsUI(false); // Clear the loading status on failure
+    }
 }
 
 /**
@@ -159,11 +193,22 @@ async function predict(callback = () => {}) {
  * Displays the results from a tensor of probabilities
  */
 function displayResult(chartdata) {
+    // Destroy previous Chart instance if it exists to prevent memory leaks and overlapping charts
+    if (myChart) {
+        myChart.destroy();
+        myChart = null;
+    }
+
+    // If chartdata is empty, do not try to calculate predictions or render a new chart
+    if (!chartdata || chartdata.length === 0) {
+        return;
+    }
+
     const iMax = argMax(chartdata);
     document.getElementById("predictedClass").innerHTML = models[modelID].classes[iMax];
     document.getElementById("confidence").innerHTML = Math.floor(chartdata[iMax] * 100) + "%";
 
-    new Chart(chartCtx, {
+    myChart = new Chart(chartCtx, {
         type: 'bar',
         data: {
             labels: models[modelID].classes,
@@ -175,6 +220,8 @@ function displayResult(chartdata) {
         },
         options: {
             animation: false,
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 yAxes: [{
                     ticks: { beginAtZero: true }
