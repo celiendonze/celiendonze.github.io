@@ -258,10 +258,13 @@ input[type="range"]::-webkit-slider-thumb:hover {
 /* Secondary styling for orange sections */
 .orange-accent select:focus, 
 .orange-accent input[type="number"]:focus,
-.orange-accent input[type="range"]::-webkit-slider-thumb {
+.orange-accent input[type="text"]:focus {
     border-color: var(--orange);
-    background: var(--orange);
     box-shadow: 0 0 0 1px var(--orange-glow);
+}
+
+.orange-accent input[type="range"]::-webkit-slider-thumb {
+    background: var(--orange);
 }
 
 /* Grid parameters separator */

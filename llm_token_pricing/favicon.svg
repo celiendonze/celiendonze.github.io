@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#f97316" />
+    </linearGradient>
+  </defs>
+  <!-- Background Coin -->
+  <circle cx="50" cy="50" r="46" fill="#09090b" stroke="url(#grad1)" stroke-width="6"/>
+  <!-- Circuits/Neural pathways -->
+  <path d="M 28 50 L 72 50 M 50 28 L 50 72" stroke="url(#grad1)" stroke-width="2" opacity="0.4" stroke-dasharray="2 2"/>
+  <path d="M 34 34 L 66 66 M 34 66 L 66 34" stroke="url(#grad1)" stroke-width="2" opacity="0.4" stroke-dasharray="2 2"/>
+  <!-- Nodes representing hardware/LLM computation -->
+  <circle cx="50" cy="28" r="3" fill="#06b6d4" />
+  <circle cx="50" cy="72" r="3" fill="#f97316" />
+  <circle cx="28" cy="50" r="3" fill="#06b6d4" />
+  <circle cx="72" cy="50" r="3" fill="#f97316" />
+  <circle cx="34" cy="34" r="3" fill="#06b6d4" />
+  <circle cx="66" cy="66" r="3" fill="#f97316" />
+  <circle cx="34" cy="66" r="3" fill="#f97316" />
+  <circle cx="66" cy="34" r="3" fill="#06b6d4" />
+  <!-- Center Token Coin -->
+  <circle cx="50" cy="50" r="18" fill="#1f1f23" stroke="url(#grad1)" stroke-width="2"/>
+  <text x="50" y="56" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">$</text>
+</svg>
