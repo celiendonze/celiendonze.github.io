@@ -17,6 +17,7 @@ Preview any project by opening `index.html` in a browser. For local serving: `py
 | `tfjs_mnist/` | MNIST digit recognition (TensorFlow.js) |
 | `webgl/` | WebGL experiments (heart, labo1, labo2 with sun shader) |
 | `coralie/` | Image toggle (gift box) |
+| `llm_token_pricing/` | LLM self-hosted hardware token pricing TCO calculator |
 | `karaoke_queue/` | Karaoke queue app — handled by a separate repo |
 
 ## Notable details
