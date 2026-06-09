@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Hardware Token Pricing Calculator</title>
+    <meta name="description" content="An interactive calculator to compute and analyze LLM self-hosted token costs (input, output, cache read, cache write) based on hardware price, electricity, PUE, and amortization.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-section">
+                <h1 id="main-title">LLM HARDWARE <span class="orange">TOKEN</span> <span class="cyan">PRICING</span></h1>
+                <p>Compute Total Cost of Ownership (TCO) and token pricing for self-hosted LLM inference engines.</p>
+            </div>
+            <div class="tabs" role="tablist" aria-label="Calculator Views">
+                <button class="tab-btn active" id="tab-pricing" role="tab" aria-selected="true" aria-controls="view-pricing" tabindex="0">Token Pricing Analysis</button>
+                <button class="tab-btn" id="tab-blended" role="tab" aria-selected="false" aria-controls="view-blended" tabindex="-1">Blended Prompt Calculator</button>
+            </div>
+        </header>
+
+        <main class="main-layout">
+            <!-- Left panel: Inputs / Parameters -->
+            <section class="panel" aria-labelledby="params-title">
+                <h2 id="params-title">PARAMETERS <span class="badge badge-cyan">CONFIG</span></h2>
+                <div class="inputs-grid">
+                    <!-- Hardware Preset -->
+                    <div class="form-group">
+                        <label for="hardware-preset">Hardware Profile Preset</label>
+                        <select id="hardware-preset">
+                            <option value="custom">-- Custom Hardware Specs --</option>
+                            <option value="rtx3090" selected>NVIDIA RTX 3090 (24GB)</option>
+                            <option value="rtx4090">NVIDIA RTX 4090 (24GB)</option>
+                            <option value="rtx5090">NVIDIA RTX 5090 (32GB)</option>
+                            <option value="rtx6000">NVIDIA RTX 6000 Pro Blackwell (96GB)</option>
+                            <option value="h100">NVIDIA H100 SXM5 (80GB)</option>
+                            <option value="blackwell">NVIDIA Blackwell B200 (192GB)</option>
+                            <option value="m3ultra">Apple Mac Studio M3 Ultra (192GB)</option>
+                        </select>
+                    </div>
+
+                    <div class="section-title">Capital Expense (CapEx)</div>
+
+                    <!-- Hardware Price -->
+                    <div class="form-group orange-accent">
+                        <label for="hardware-price">Hardware Price <span class="unit">$</span></label>
+                        <div class="input-with-slider">
+                            <div class="input-row">
+                                <input type="number" id="hardware-price" min="0" max="1000000" step="100" value="1000">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="hardware-price-slider" min="500" max="50000" step="100" value="1000" aria-label="Hardware Price Slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amortization / Profitability Duration -->
+                    <div class="form-group orange-accent">
+                        <label for="years-profitable">Amortization Period <span class="unit">Years</span></label>
+                        <div class="input-with-slider">
+                            <div class="input-row">
+                                <input type="number" id="years-profitable" min="0.1" max="10" step="0.1" value="3">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="years-profitable-slider" min="0.5" max="5" step="0.5" value="3" aria-label="Amortization Period Slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Operating Expense (OpEx)</div>
+
+                    <!-- Utilization -->
+                    <div class="form-group">
+                        <label for="utilization">Average Active Utilization <span class="unit">%</span></label>
+                        <div class="input-with-slider">
+                            <div class="input-row">
+                                <input type="number" id="utilization" min="1" max="100" step="1" value="50">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="utilization-slider" min="5" max="100" step="5" value="50" aria-label="Utilization Slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Electricity Rate -->
+                    <div class="form-group">
+                        <label for="electricity-cost">Electricity Cost <span class="unit">$/kWh</span></label>
+                        <div class="input-with-slider">
+                            <div class="input-row">
+                                <input type="number" id="electricity-cost" min="0" max="2.00" step="0.01" value="0.15">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="electricity-cost-slider" min="0" max="0.80" step="0.01" value="0.15" aria-label="Electricity Cost Slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cooling PUE -->
+                    <div class="form-group">
+                        <label for="pue">Cooling Overhead <span class="unit">PUE</span></label>
+                        <div class="input-with-slider">
+                            <div class="input-row">
+                                <input type="number" id="pue" min="1.0" max="3.0" step="0.05" value="1.20">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="pue-slider" min="1.0" max="2.0" step="0.05" value="1.20" aria-label="PUE Slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Power Active -->
+                    <div class="form-group">
+                        <label for="active-power">Active Power Draw <span class="unit">Watts</span></label>
+                        <div class="input-with-slider">
+                            <div class="input-row">
+                                <input type="number" id="active-power" min="1" max="2000" step="10" value="350">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="active-power-slider" min="50" max="1500" step="10" value="350" aria-label="Active Power Draw Slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Power Idle -->
+                    <div class="form-group">
+                        <label for="idle-power">Idle Power Draw <span class="unit">Watts</span></label>
+                        <div class="input-with-slider">
+                            <div class="input-row">
+                                <input type="number" id="idle-power" min="0" max="1000" step="5" value="25">
+                            </div>
+                            <div class="range-container">
+                                <input type="range" id="idle-power-slider" min="5" max="300" step="5" value="25" aria-label="Idle Power Draw Slider">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Speed Specs (Llama 3 8B baseline)</div>
+
+                    <!-- Input Speed -->
+                    <div class="form-group">
+                        <label for="speed-input">Input (Prefill) Speed <span class="unit">tok/s</span></label>
+                        <input type="number" id="speed-input" min="1" max="50000" value="400">
+                    </div>
+
+                    <!-- Output Speed -->
+                    <div class="form-group orange-accent">
+                        <label for="speed-output">Output (Decode) Speed <span class="unit">tok/s</span></label>
+                        <input type="number" id="speed-output" min="1" max="5000" value="65">
+                    </div>
+
+                    <!-- Cache Read Speed -->
+                    <div class="form-group">
+                        <label for="speed-cache-read">Cache Read Speed <span class="unit">tok/s</span></label>
+                        <input type="number" id="speed-cache-read" min="1" max="100000" value="1200">
+                    </div>
+
+                    <!-- Cache Write Speed -->
+                    <div class="form-group">
+                        <label for="speed-cache-write">Cache Write Speed <span class="unit">tok/s</span></label>
+                        <input type="number" id="speed-cache-write" min="1" max="100000" value="800">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right panel: Outputs (Dynamic based on selected tab) -->
+            <section class="panel-container">
+                <!-- VIEW 1: Token Pricing Analysis -->
+                <div class="view-content active" id="view-pricing" role="tabpanel" aria-labelledby="tab-pricing">
+                    <div class="panel">
+                        <h2>COST PER 1 MILLION TOKENS <span class="badge badge-orange">ANALYSIS</span></h2>
+                        <div class="formula-box">
+                            <span class="formula-title">TCO Pricing Formula:</span>
+                            <span class="formula-code">Cost / 1M Tokens<sub>T</sub> = (1,000,000 / Speed<sub>T</sub>) &times; (Hourly Cost / (3,600 &times; Utilization))</span>
+                            <div class="formula-details">
+                                where <strong>Hourly Cost</strong> = (Hardware Price / Amortization Hours) + (Average Power kW &times; PUE &times; Electricity Cost)
+                            </div>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-card input-card">
+                                <div class="metric-label">Input (Prefill)</div>
+                                <div class="metric-value cyan-text" id="metric-input-cost">$0.00</div>
+                                <div class="metric-subtext">At <span id="lbl-input-speed">400</span> tokens/s</div>
+                            </div>
+                            <div class="metric-card output-card">
+                                <div class="metric-label">Output (Decode)</div>
+                                <div class="metric-value orange-text" id="metric-output-cost">$0.00</div>
+                                <div class="metric-subtext">At <span id="lbl-output-speed">65</span> tokens/s</div>
+                            </div>
+                            <div class="metric-card read-card">
+                                <div class="metric-label">Cache Read</div>
+                                <div class="metric-value" id="metric-read-cost">$0.00</div>
+                                <div class="metric-subtext">At <span id="lbl-read-speed">1200</span> tokens/s</div>
+                            </div>
+                            <div class="metric-card write-card">
+                                <div class="metric-label">Cache Write</div>
+                                <div class="metric-value" id="metric-write-cost">$0.00</div>
+                                <div class="metric-subtext">At <span id="lbl-write-speed">800</span> tokens/s</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary overview metrics -->
+                    <div class="summary-bar">
+                        <div class="summary-item">
+                            <div class="summary-item-label">Amortized CapEx / Hr</div>
+                            <div class="summary-item-value" id="summary-capex-hr">$0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-item-label">Avg Electricity / Hr</div>
+                            <div class="summary-item-value" id="summary-opex-hr">$0.00</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-item-label">Average Power load</div>
+                            <div class="summary-item-value" id="summary-power-avg">0.00 W</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-item-label">Total Allocated / Hr</div>
+                            <div class="summary-item-value" id="summary-total-hr" style="color: var(--orange);">$0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-row">
+                        <!-- Chart container -->
+                        <div class="panel">
+                            <h2>COST RATIO VISUALIZATION</h2>
+                            <div class="chart-container">
+                                <canvas id="costChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Table container -->
+                        <div class="panel">
+                            <h2>DETAILED TCO BREAKDOWN</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Expense Category</th>
+                                        <th class="number">Hourly</th>
+                                        <th class="number">Annual</th>
+                                        <th class="number">Share %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Hardware Depreciation (CapEx)</td>
+                                        <td class="number" id="tbl-capex-hr">$0.00</td>
+                                        <td class="number" id="tbl-capex-yr">$0.00</td>
+                                        <td class="number" id="tbl-capex-pct">0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Hardware Power (OpEx)</td>
+                                        <td class="number" id="tbl-power-hr">$0.00</td>
+                                        <td class="number" id="tbl-power-yr">$0.00</td>
+                                        <td class="number" id="tbl-power-pct">0%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cooling & Overhead (OpEx)</td>
+                                        <td class="number" id="tbl-cooling-hr">$0.00</td>
+                                        <td class="number" id="tbl-cooling-yr">$0.00</td>
+                                        <td class="number" id="tbl-cooling-pct">0%</td>
+                                    </tr>
+                                    <tr style="font-weight: 700; border-top: 1px solid var(--border-hover);">
+                                        <td>Total Cost of Ownership</td>
+                                        <td class="number" id="tbl-total-hr">$0.00</td>
+                                        <td class="number" id="tbl-total-yr">$0.00</td>
+                                        <td class="number">100%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: Blended Prompt Calculator -->
+                <div class="view-content" id="view-blended" role="tabpanel" aria-labelledby="tab-blended">
+                    <div class="panel">
+                        <h2>BLENDED PROMPT ESTIMATOR <span class="badge badge-orange">SANDBOX</span></h2>
+                        <div class="prompt-calculator-layout">
+                            <!-- Input tokens configuration -->
+                            <div class="token-config-panel">
+                                <div class="section-title" style="margin-top:0;">Request Token Profile</div>
+                                
+                                <div class="token-config-row">
+                                    <div class="form-group">
+                                        <label for="prompt-input-tokens">Input Tokens</label>
+                                        <input type="number" id="prompt-input-tokens" min="0" step="100" value="1000">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="prompt-output-tokens">Output Tokens</label>
+                                        <input type="number" id="prompt-output-tokens" min="0" step="50" value="200">
+                                    </div>
+                                </div>
+
+                                <div class="token-config-row">
+                                    <div class="form-group">
+                                        <label for="prompt-read-tokens">KV Cache Read Tokens</label>
+                                        <input type="number" id="prompt-read-tokens" min="0" step="100" value="500">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="prompt-write-tokens">KV Cache Write Tokens</label>
+                                        <input type="number" id="prompt-write-tokens" min="0" step="100" value="500">
+                                    </div>
+                                </div>
+
+                                <div class="section-title">Query Frequency</div>
+                                <div class="form-group">
+                                    <label for="prompt-frequency">Prompts Per Day</label>
+                                    <input type="number" id="prompt-frequency" min="1" max="10000000" step="1000" value="50000">
+                                </div>
+                            </div>
+
+                            <!-- Cost display outputs -->
+                            <div class="cost-display-card">
+                                <div class="cost-display-header">
+                                    <h3>Estimated Cost Per Prompt</h3>
+                                    <div class="cost-big" id="calc-prompt-cost">$0.000000</div>
+                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                        Execution time: <span id="calc-prompt-time" style="color: var(--cyan); font-family: var(--font-mono);">0.00s</span>
+                                    </p>
+                                </div>
+
+                                <div class="cost-projection-list">
+                                    <div class="projection-item">
+                                        <span class="projection-label">Daily Running Cost</span>
+                                        <span class="projection-value" id="calc-cost-day">$0.00</span>
+                                    </div>
+                                    <div class="projection-item">
+                                        <span class="projection-label">Monthly running Cost (30 days)</span>
+                                        <span class="projection-value" id="calc-cost-month" style="color: var(--orange); font-size: 1rem;">$0.00</span>
+                                    </div>
+                                    <div class="projection-item">
+                                        <span class="projection-label">Annualized Cost</span>
+                                        <span class="projection-value" id="calc-cost-year">$0.00</span>
+                                    </div>
+                                    <div class="projection-item">
+                                        <span class="projection-label">Effective Token Price / 1M Blended</span>
+                                        <span class="projection-value" id="calc-cost-million-blended" style="color: var(--cyan);">$0.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <div class="footer-credit">
+                &copy; 2026 Célien Donzé
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
